@@ -48,9 +48,9 @@ function generateMemoryFilesTable(): string {
   }).join('\n');
 }
 
-function generateProtectionLevelsTable(): string {
-  return Object.values(PROTECTION_CATEGORIES).map(level => {
-    return `| ${level.symbol} ${level.emoji} | **${level.name}** | ${level.description} |`;
+function generateProtectionCategoriesTable(): string {
+  return Object.values(PROTECTION_CATEGORIES).map(category => {
+    return `| ${category.symbol} ${category.emoji} | **${category.name}** | ${category.description} |`;
   }).join('\n');
 }
 
@@ -178,9 +178,9 @@ ${mode.forbiddenOperations.map(op => `- ${op}`).join('\n')}
 
 ${Object.values(MEMORY_FILES).map(file => `- **${file.symbol} ${file.emoji}** \`${file.filename}\`: ${file.description}`).join('\n')}
 
-## 🛡️ Protection Levels (Ψ)
+## 🛡️ Protection Categories (Ψ)
 
-${Object.values(PROTECTION_CATEGORIES).map(level => `- **${level.symbol} ${level.emoji} ${level.name}**: ${level.description}`).join('\n')}
+${Object.values(PROTECTION_CATEGORIES).map(category => `- **${category.symbol} ${category.emoji} ${category.name}**: ${category.description}`).join('\n')}
 
 ## 👤 Roles (ρ)
 
@@ -309,9 +309,9 @@ ${generateMemoryFilesTable()}
 | **DEVELOPMENT** | Π₃ 🏗️ | Main development work |
 | **MAINTENANCE** | Π₄ 🔧 | Long-term support |
 
-| Level | Symbol | Description |
-|-------|--------|-------------|
-${generateProtectionLevelsTable()}
+| Category | Symbol | Description |
+|----------|--------|-------------|
+${generateProtectionCategoriesTable()}
 
 ### Roles (ρ) & Responsibilities
 
@@ -339,11 +339,11 @@ ${opts.includeBMAD ? generateBMADContext(opts.currentMode, opts.currentRole, opt
 
 **CRITICAL**: Before ANY file modification:
 1. Check current mode permissions (ℙ)
-2. Verify protection level (Ψ) in protection.md
+2. Verify protection category (Ψ) in protection.md
 3. Confirm gate stage allows modifications
 4. Log intended changes to activeContext.md
 
-**Protection Levels**:
+**Protection Categories**:
 - Ψ₁ 🔒 PROTECTED: NEVER modify without explicit approval
 - Ψ₂ 🛡️ GUARDED: Ask before modifying
 - Ψ₃ ℹ️ INFO: Context notes
