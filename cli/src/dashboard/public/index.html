@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIPER-for-All Dashboard</title>
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --border-color: #30363d;
+            --accent-blue: #58a6ff;
+            --accent-green: #238636;
+            --accent-yellow: #d29922;
+            --accent-red: #da3633;
+            --accent-purple: #8957e5;
+            --mode-research: #58a6ff;
+            --mode-innovate: #a371f7;
+            --mode-plan: #d29922;
+            --mode-execute: #238636;
+            --mode-review: #f0883e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .card-icon {
+            font-size: 20px;
+        }
+
+        /* BMAD Status */
+        .bmad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .bmad-item {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .bmad-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .bmad-value {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .mode-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .mode-research { background: rgba(88, 166, 255, 0.2); color: var(--mode-research); }
+        .mode-innovate { background: rgba(163, 113, 247, 0.2); color: var(--mode-innovate); }
+        .mode-plan { background: rgba(210, 153, 34, 0.2); color: var(--mode-plan); }
+        .mode-execute { background: rgba(35, 134, 54, 0.2); color: var(--mode-execute); }
+        .mode-review { background: rgba(240, 136, 62, 0.2); color: var(--mode-review); }
+
+        /* Permission Matrix */
+        .permission-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .permission-allowed {
+            color: var(--accent-green);
+        }
+
+        .permission-denied {
+            color: var(--accent-red);
+        }
+
+        /* Gate Progress */
+        .gate-flow {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .gate-step {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .gate-step.active {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .gate-step.completed {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .gate-connector {
+            color: var(--text-secondary);
+        }
+
+        /* Violations */
+        .violation-stats {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .violation-stat {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+        }
+
+        .violation-count {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .violation-count.critical { color: var(--accent-red); }
+        .violation-count.error { color: var(--accent-red); }
+        .violation-count.warn { color: var(--accent-yellow); }
+        .violation-count.info { color: var(--accent-blue); }
+
+        .violation-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* MCP Servers */
+        .mcp-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .mcp-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+        }
+
+        .mcp-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mcp-status {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .mcp-status.installed {
+            background: rgba(35, 134, 54, 0.2);
+            color: var(--accent-green);
+        }
+
+        .mcp-status.missing {
+            background: rgba(218, 54, 51, 0.2);
+            color: var(--accent-red);
+        }
+
+        /* Quick Actions */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .action-btn:hover {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        /* Memory Bank */
+        .memory-files {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .memory-file {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .memory-file:hover {
+            background: var(--border-color);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            padding: 20px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 12px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .bmad-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <span style="font-size: 32px;">🧠</span>
+                    <h1>RIPER-for-All</h1>
+                </div>
+                <div class="connection-status">
+                    <span class="status-dot"></span>
+                    <span id="connection-text">Connected</span>
+                    <span id="last-updated"></span>
+                </div>
+            </div>
+        </header>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+        </div>
+
+        <div id="dashboard" class="dashboard-grid" style="display: none;">
+            <!-- BMAD Status Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🎯</span>
+                    <h3>BMAD Status</h3>
+                </div>
+                <div class="bmad-grid">
+                    <div class="bmad-item">
+                        <div class="bmad-label">Mode</div>
+                        <div id="mode-value" class="bmad-value">-</div>
+                    </div>
+                    <div class="bmad-item">
+                        <div class="bmad-label">Role</div>
+                        <div id="role-value" class="bmad-value">-</div>
+                    </div>
+                    <div class="bmad-item">
+                        <div class="bmad-label">Gate</div>
+                        <div id="gate-value" class="bmad-value">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mode Permissions Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🔐</span>
+                    <h3>Mode Permissions</h3>
+                </div>
+                <div id="permissions-grid" class="permission-grid">
+                    <div class="permission-item">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Gate Progress Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🚦</span>
+                    <h3>Quality Gate</h3>
+                </div>
+                <div id="gate-flow" class="gate-flow">
+                    Loading...
+                </div>
+            </div>
+
+            <!-- Role Capabilities Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">👤</span>
+                    <h3>Role Capabilities</h3>
+                </div>
+                <div id="role-capabilities" class="permission-grid">
+                    Loading...
+                </div>
+            </div>
+
+            <!-- Violations Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">⚠️</span>
+                    <h3>Violations</h3>
+                </div>
+                <div class="violation-stats">
+                    <div class="violation-stat">
+                        <div id="violation-total" class="violation-count">-</div>
+                        <div class="violation-label">Total</div>
+                    </div>
+                    <div class="violation-stat">
+                        <div id="violation-critical" class="violation-count critical">-</div>
+                        <div class="violation-label">Critical</div>
+                    </div>
+                    <div class="violation-stat">
+                        <div id="violation-error" class="violation-count error">-</div>
+                        <div class="violation-label">Errors</div>
+                    </div>
+                    <div class="violation-stat">
+                        <div id="violation-warn" class="violation-count warn">-</div>
+                        <div class="violation-label">Warnings</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MCP Servers Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🔌</span>
+                    <h3>MCP Servers</h3>
+                </div>
+                <div id="mcp-list" class="mcp-list">
+                    Loading...
+                </div>
+            </div>
+
+            <!-- Memory Bank Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">📝</span>
+                    <h3>Memory Bank</h3>
+                </div>
+                <div id="memory-files" class="memory-files">
+                    Loading...
+                </div>
+            </div>
+
+            <!-- Quick Actions Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">⚡</span>
+                    <h3>Quick Actions</h3>
+                </div>
+                <div class="actions-grid">
+                    <button class="action-btn" onclick="switchMode('research')">🔍 Research Mode</button>
+                    <button class="action-btn" onclick="switchMode('innovate')">💡 Innovate Mode</button>
+                    <button class="action-btn" onclick="switchMode('plan')">📋 Plan Mode</button>
+                    <button class="action-btn" onclick="switchMode('execute')">🔨 Execute Mode</button>
+                    <button class="action-btn" onclick="switchMode('review')">👀 Review Mode</button>
+                    <button class="action-btn" onclick="advanceGate()">➡️ Advance Gate</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>RIPER-for-All Dashboard v1.0.0 | Real-time BMAD monitoring</p>
+        </footer>
+    </div>
+
+    <script>
+        // WebSocket connection
+        let ws = null;
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 5;
+
+        function connect() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            ws = new WebSocket(`${protocol}//${window.location.host}/ws`);
+
+            ws.onopen = () => {
+                console.log('WebSocket connected');
+                reconnectAttempts = 0;
+                updateConnectionStatus(true);
+                fetchStatus();
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                handleWebSocketMessage(data);
+            };
+
+            ws.onclose = () => {
+                updateConnectionStatus(false);
+                if (reconnectAttempts < maxReconnectAttempts) {
+                    reconnectAttempts++;
+                    setTimeout(connect, 2000 * reconnectAttempts);
+                }
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+        }
+
+        function updateConnectionStatus(connected) {
+            const dot = document.querySelector('.status-dot');
+            const text = document.getElementById('connection-text');
+            
+            if (connected) {
+                dot.style.background = 'var(--accent-green)';
+                dot.style.animation = 'pulse 2s infinite';
+                text.textContent = 'Connected';
+            } else {
+                dot.style.background = 'var(--accent-red)';
+                dot.style.animation = 'none';
+                text.textContent = 'Disconnected';
+            }
+        }
+
+        async function fetchStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                updateDashboard(data);
+            } catch (error) {
+                console.error('Failed to fetch status:', error);
+            }
+        }
+
+        function handleWebSocketMessage(data) {
+            if (data.type === 'fileChange') {
+                fetchStatus();
+            }
+        }
+
+        function updateDashboard(data) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'grid';
+
+            // Update timestamps
+            document.getElementById('last-updated').textContent = 
+                '• ' + new Date().toLocaleTimeString();
+
+            // Update BMAD
+            if (data.currentMode) {
+                const modeEl = document.getElementById('mode-value');
+                modeEl.innerHTML = `<span class="mode-indicator mode-${data.currentMode.name.toLowerCase()}">${data.currentMode.symbol} ${data.currentMode.emoji} ${data.currentMode.displayName}</span>`;
+            }
+
+            // Fetch additional data
+            fetchPermissions();
+            fetchViolations();
+            fetchMCPStatus();
+        }
+
+        async function fetchPermissions() {
+            // This would fetch from a permissions endpoint
+            // For now, using placeholder
+            document.getElementById('permissions-grid').innerHTML = `
+                <div class="permission-item permission-allowed">✓ Read</div>
+                <div class="permission-item permission-denied">✗ Write</div>
+                <div class="permission-item permission-denied">✗ Delete</div>
+                <div class="permission-item permission-denied">✗ Deploy</div>
+            `;
+        }
+
+        async function fetchViolations() {
+            try {
+                const response = await fetch('/api/violations');
+                const data = await response.json();
+                
+                document.getElementById('violation-total').textContent = data.total || 0;
+                document.getElementById('violation-critical').textContent = data.bySeverity?.critical || 0;
+                document.getElementById('violation-error').textContent = data.bySeverity?.error || 0;
+                document.getElementById('violation-warn').textContent = data.bySeverity?.warn || 0;
+            } catch (error) {
+                console.error('Failed to fetch violations:', error);
+            }
+        }
+
+        async function fetchMCPStatus() {
+            // Placeholder for MCP status
+            document.getElementById('mcp-list').innerHTML = `
+                <div class="mcp-item">
+                    <div class="mcp-name">🐙 GitHub</div>
+                    <span class="mcp-status installed">Installed</span>
+                </div>
+                <div class="mcp-item">
+                    <div class="mcp-name">🔍 Web Search</div>
+                    <span class="mcp-status installed">Installed</span>
+                </div>
+                <div class="mcp-item">
+                    <div class="mcp-name">🌐 Browser</div>
+                    <span class="mcp-status missing">Not Installed</span>
+                </div>
+            `;
+        }
+
+        // Action handlers
+        function switchMode(mode) {
+            console.log('Switching to mode:', mode);
+            // Would call API to switch mode
+        }
+
+        function advanceGate() {
+            console.log('Advancing gate');
+            // Would call API to advance gate
+        }
+
+        // Initialize
+        connect();
+        fetchStatus();
+
+        // Auto-refresh every 30 seconds
+        setInterval(fetchStatus, 30000);
+    </script>
+</body>
+</html>

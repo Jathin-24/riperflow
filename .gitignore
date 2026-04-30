@@ -1,0 +1,8 @@
+node_modules/
+dist/
+coverage/
+.riper/
+test-project/.riper/
+test-project/memory-bank/
+*.log
+.DS_Store
