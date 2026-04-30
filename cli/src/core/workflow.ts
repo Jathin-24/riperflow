@@ -110,15 +110,13 @@ Permissions:
   }
 }
 
-// Singleton instance
-let workflowEngine: WorkflowEngine | null = null;
-
 export async function getWorkflowEngine(): Promise<WorkflowEngine> {
-  if (!workflowEngine) {
-    workflowEngine = new WorkflowEngine();
-    await workflowEngine.initialize();
-  }
-  return workflowEngine;
+  // No caching: always re-instantiate so a stale in-memory state can't
+  // overwrite newer updates from another process. The disk read is ~1ms
+  // and CLI invocations are short, so the cost is negligible.
+  const engine = new WorkflowEngine();
+  await engine.initialize();
+  return engine;
 }
 
 export async function switchMode(newMode: Mode): Promise<void> {
