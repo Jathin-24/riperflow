@@ -66,7 +66,7 @@ export abstract class BaseAdapter {
     try {
       await fs.ensureDir(rulesDir);
       await fs.writeFile(rulesFilePath, rulesContent, 'utf-8');
-      
+
       return {
         success: true,
         message: `Installed RIPER rules to ${this.config.displayName}`,
@@ -121,29 +121,30 @@ export abstract class BaseAdapter {
   }
 }
 
+type AdapterFactory = (projectPath: string, options?: { mode?: string; role?: string; gate?: string }) => Promise<BaseAdapter>;
+
+const ADAPTER_REGISTRY: Record<string, AdapterFactory> = {
+  cursor: async (p, o) => { const { CursorAdapter } = await import('./cursor.js'); return new CursorAdapter(p, o); },
+  'claude-code': async (p, o) => { const { ClaudeCodeAdapter } = await import('./claude-code.js'); return new ClaudeCodeAdapter(p, o); },
+  claudecode: async (p, o) => { const { ClaudeCodeAdapter } = await import('./claude-code.js'); return new ClaudeCodeAdapter(p, o); },
+  opencode: async (p, o) => { const { OpenCodeAdapter } = await import('./opencode.js'); return new OpenCodeAdapter(p, o); },
+  kilocode: async (p) => { const { KiloCodeAdapter } = await import('./kilocode.js'); return new KiloCodeAdapter(p); },
+  cline: async (p, o) => { const { ClineAdapter } = await import('./cline.js'); return new ClineAdapter(p, o); },
+  codex: async (p, o) => { const { CodexAdapter } = await import('./codex.js'); return new CodexAdapter(p, o); },
+  aider: async (p, o) => { const { AiderAdapter } = await import('./aider.js'); return new AiderAdapter(p, o); },
+  roo: async (p, o) => { const { RooCodeAdapter } = await import('./roo-code.js'); return new RooCodeAdapter(p, o); },
+  'roo-code': async (p, o) => { const { RooCodeAdapter } = await import('./roo-code.js'); return new RooCodeAdapter(p, o); },
+  windsurf: async (p, o) => { const { WindsurfAdapter } = await import('./windsurf.js'); return new WindsurfAdapter(p, o); },
+};
+
+// Distinct id list (deduped, canonical names — used by sync, init prompts, and tests)
+export const ADAPTER_IDS: string[] = ['cursor', 'claude-code', 'opencode', 'kilocode', 'cline', 'codex', 'aider', 'roo', 'windsurf'];
+
 export async function createAdapter(
   toolName: string,
-  projectPath: string
+  projectPath: string,
+  options?: { mode?: string; role?: string; gate?: string }
 ): Promise<BaseAdapter | null> {
-  switch (toolName.toLowerCase()) {
-    case 'cursor': {
-      const { CursorAdapter } = await import('./cursor.js');
-      return new CursorAdapter(projectPath);
-    }
-    case 'claudecode':
-    case 'claude-code': {
-      const { ClaudeCodeAdapter } = await import('./claude-code.js');
-      return new ClaudeCodeAdapter(projectPath);
-    }
-    case 'opencode': {
-      const { OpenCodeAdapter } = await import('./opencode.js');
-      return new OpenCodeAdapter(projectPath);
-    }
-    case 'kilocode': {
-      const { KiloCodeAdapter } = await import('./kilocode.js');
-      return new KiloCodeAdapter(projectPath);
-    }
-    default:
-      return null;
-  }
+  const factory = ADAPTER_REGISTRY[toolName.toLowerCase()];
+  return factory ? factory(projectPath, options) : null;
 }
