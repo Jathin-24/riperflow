@@ -176,8 +176,7 @@ export async function ensureMemoryBank(): Promise<void> {
 
 export async function initializeState(): Promise<RuntimeState> {
   const state = getDefaultState();
-  const statePath = path.join(getRiperDir(), 'state.json');
-  await fs.writeJson(statePath, state, { spaces: 2 });
+  await saveState(state);
   return state;
 }
 
