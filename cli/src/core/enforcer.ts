@@ -224,8 +224,11 @@ export function checkProtectionLevel(
     return { level: protectionLevel, allowed: true };
   }
 
-  // locked/frozen - Block all modifications
+  // locked/frozen - Block modifications (reads are always allowed)
   if (protectionLevel === 'locked' || protectionLevel === 'frozen') {
+    if (action === 'read') {
+      return { level: protectionLevel, allowed: true };
+    }
     return {
       level: protectionLevel,
       allowed: false,

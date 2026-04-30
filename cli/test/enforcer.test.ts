@@ -75,7 +75,7 @@ describe('Enforcer', () => {
       const request: OperationRequest = {
         action: 'write',
         currentMode: 'execute',
-        currentRole: 'developer',
+        currentRole: 'dev',
         path: 'src/test.ts'
       };
 
@@ -87,7 +87,7 @@ describe('Enforcer', () => {
       const request: OperationRequest = {
         action: 'write',
         currentMode: 'research',
-        currentRole: 'developer',
+        currentRole: 'dev',
         path: 'src/test.ts'
       };
 
@@ -100,7 +100,7 @@ describe('Enforcer', () => {
       const request: OperationRequest = {
         action: 'write',
         currentMode: 'execute',
-        currentRole: 'developer',
+        currentRole: 'dev',
         path: 'src/locked.ts'
       };
 
