@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { loadConfig, loadState, saveState, getDefaultState } from '../config/loader.js';
-import { GATES, GATE_ORDER, getGate, listGates, getNextGate, GateStage, GateStatus } from '../core/gates.js';
+import { GATES, GATE_ORDER, getGate, listGates, getNextGate, validateGateProgression, GateStage, GateStatus } from '../core/gates.js';
 import type { RuntimeState, GateStatuses } from '../core/types.js';
 import { enforce, EnforcementError } from '../core/enforce.js';
 
@@ -120,6 +120,27 @@ async function advanceGate(gateStatuses: GateStatuses, state: RuntimeState | nul
   if (!nextGate) {
     console.log(chalk.yellow('\n⚠ Already at final gate!\n'));
     return;
+  }
+
+  // Validate gate progression before advancing
+  const currentStatus: GateStatus = gateStatuses[currentGate] ?? {
+    gate: currentGate,
+    approved: false,
+    approvers: [],
+    timestamp: null,
+  };
+
+  const result = validateGateProgression(currentGate, currentStatus);
+  if (!result.canProgress) {
+    console.log(chalk.red(`\n❌ Cannot advance from ${GATES[currentGate].emoji} ${GATES[currentGate].name}:\n`));
+    for (const blocker of result.blockers) {
+      const icon = blocker.severity === 'error' ? '✗' : '⚠';
+      console.log(chalk.red(`  ${icon} ${blocker.description}`));
+    }
+    if (result.missingApprovals.length > 0) {
+      console.log(chalk.gray(`\n💡 Missing approvals: ${result.missingApprovals.join(', ')}\n`));
+    }
+    process.exit(1);
   }
 
   gateStatuses.current = nextGate;
