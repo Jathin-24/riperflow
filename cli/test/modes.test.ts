@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { MODES, PHASES, MEMORY_FILES, PROTECTION_LEVELS, getMode, getPhase, getMemoryFile } from '../src/core/modes.js';
+import { MODES, PHASES, MEMORY_FILES, PROTECTION_CATEGORIES, getMode, getPhase, getMemoryFile } from '../src/core/modes.js';
 
 describe('Core Modes', () => {
   describe('MODES', () => {
@@ -91,9 +91,9 @@ describe('Core Modes', () => {
     });
   });
 
-  describe('PROTECTION_LEVELS', () => {
-    it('should have 6 protection levels', () => {
-      expect(Object.keys(PROTECTION_LEVELS)).toHaveLength(6);
+  describe('PROTECTION_CATEGORIES', () => {
+    it('should have 6 protection categories', () => {
+      expect(Object.keys(PROTECTION_CATEGORIES)).toHaveLength(6);
     });
   });
 

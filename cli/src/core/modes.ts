@@ -1,4 +1,4 @@
-import { ModeDefinition, PhaseDefinition, MemoryFile, ProtectionLevel } from './types.js';
+import { ModeDefinition, PhaseDefinition, MemoryFile, ProtectionCategory } from './types.js';
 
 export const MODES: Record<string, ModeDefinition> = {
   research: {
@@ -171,7 +171,7 @@ export const MEMORY_FILES: Record<string, MemoryFile> = {
   }
 };
 
-export const PROTECTION_LEVELS: Record<string, ProtectionLevel> = {
+export const PROTECTION_CATEGORIES: Record<string, ProtectionCategory> = {
   protected: {
     id: 1,
     name: 'PROTECTED',
@@ -228,6 +228,6 @@ export function getMemoryFile(fileId: string): MemoryFile | undefined {
   return MEMORY_FILES[fileId.toLowerCase()];
 }
 
-export function getProtectionLevel(levelId: number): ProtectionLevel | undefined {
-  return Object.values(PROTECTION_LEVELS).find(level => level.id === levelId);
+export function getProtectionCategory(categoryId: number): ProtectionCategory | undefined {
+  return Object.values(PROTECTION_CATEGORIES).find(level => level.id === categoryId);
 }

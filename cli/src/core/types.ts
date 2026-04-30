@@ -39,7 +39,7 @@ export interface MemoryFile {
   maxSize?: number;
 }
 
-export interface ProtectionLevel {
+export interface ProtectionCategory {
   id: number;
   name: string;
   symbol: string;

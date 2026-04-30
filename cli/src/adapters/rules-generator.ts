@@ -1,4 +1,4 @@
-import { MODES, PHASES, MEMORY_FILES, PROTECTION_LEVELS } from '../core/modes.js';
+import { MODES, PHASES, MEMORY_FILES, PROTECTION_CATEGORIES } from '../core/modes.js';
 import { ROLES } from '../core/roles.js';
 import { GateStage, listGates, type QualityGate } from '../core/gates.js';
 import type { ModeDefinition, PermissionMatrix } from '../core/types.js';
@@ -49,7 +49,7 @@ function generateMemoryFilesTable(): string {
 }
 
 function generateProtectionLevelsTable(): string {
-  return Object.values(PROTECTION_LEVELS).map(level => {
+  return Object.values(PROTECTION_CATEGORIES).map(level => {
     return `| ${level.symbol} ${level.emoji} | **${level.name}** | ${level.description} |`;
   }).join('\n');
 }
@@ -180,7 +180,7 @@ ${Object.values(MEMORY_FILES).map(file => `- **${file.symbol} ${file.emoji}** \`
 
 ## 🛡️ Protection Levels (Ψ)
 
-${Object.values(PROTECTION_LEVELS).map(level => `- **${level.symbol} ${level.emoji} ${level.name}**: ${level.description}`).join('\n')}
+${Object.values(PROTECTION_CATEGORIES).map(level => `- **${level.symbol} ${level.emoji} ${level.name}**: ${level.description}`).join('\n')}
 
 ## 👤 Roles (ρ)
 
