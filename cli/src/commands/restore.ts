@@ -52,31 +52,45 @@ export async function restoreCommand(options: any): Promise<void> {
   }
   const originalFilename = parts.join('.');
   
-  // Determine restore location
+  // Determine restore location:
+  // 1. If a current copy exists in memory-bank/, restore there.
+  // 2. If a current copy exists in .riper/, restore there.
+  // 3. Otherwise infer from extension: .md -> memory-bank/, anything else -> .riper/.
   const memoryBankDir = getMemoryBankDir();
   const riperDir = getRiperDir();
-  
-  let restorePath = path.join(memoryBankDir, originalFilename);
-  
-  // Check if file exists in memory-bank, otherwise try .riper
-  if (!(await fs.pathExists(restorePath))) {
-    restorePath = path.join(riperDir, originalFilename);
+  let restorePath: string;
+  const memoryBankCandidate = path.join(memoryBankDir, originalFilename);
+  const riperCandidate = path.join(riperDir, originalFilename);
+
+  if (await fs.pathExists(memoryBankCandidate)) {
+    restorePath = memoryBankCandidate;
+  } else if (await fs.pathExists(riperCandidate)) {
+    restorePath = riperCandidate;
+  } else {
+    // File was deleted; pick a sensible target by extension.
+    restorePath = originalFilename.endsWith('.md')
+      ? memoryBankCandidate
+      : riperCandidate;
+    console.log(chalk.gray(`  (target file did not exist; will create at ${restorePath})`));
   }
 
-  if (!(await fs.pathExists(restorePath))) {
-    console.log(chalk.red(`❌ Original file not found: ${originalFilename}`));
-    console.log(chalk.gray('\n💡 List backups: riper-for-all backup --list\n'));
-    process.exit(1);
-  }
-
-  // Backup current file before restoring
+  const targetExists = await fs.pathExists(restorePath);
   console.log(chalk.cyan(`\n🔄 Restoring ${originalFilename}...`));
-  await autoBackupFile(restorePath, true);
-  
-  // Restore
+
+  // Only auto-backup if there's something to back up.
+  if (targetExists) {
+    await autoBackupFile(restorePath, true);
+  }
+
+  // Ensure parent dir exists (covers the deleted-target case)
+  await fs.ensureDir(path.dirname(restorePath));
   await fs.copy(backupPath, restorePath, { overwrite: true });
 
   console.log(chalk.green(`\n✅ Restored: ${originalFilename}`));
   console.log(chalk.gray(`   From backup: ${backupFile}\n`));
-  console.log(chalk.gray(`💡 Current file has been backed up before restore\n`));
+  if (targetExists) {
+    console.log(chalk.gray(`💡 Previous file backed up before restore\n`));
+  } else {
+    console.log(chalk.gray(`💡 File was missing; restored from backup\n`));
+  }
 }
