@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { PROTECTION_LEVELS, getProtection, listProtectionLevels, canWrite, canDelete, needsApproval, ProtectionLevel } from '../src/core/protection.js';
+import { PROTECTION_LEVELS, getProtection, listProtectionLevels, canWrite, canDelete, needsApproval, ProtectionLevel, DEFAULT_PROTECTED_PATHS } from '../src/core/protection.js';
 
 describe('Protection', () => {
   describe('PROTECTION_LEVELS', () => {
@@ -115,6 +115,25 @@ describe('Protection', () => {
 
     it('should return false for frozen', () => {
       expect(needsApproval('frozen')).toBe(false);
+    });
+  });
+
+  describe('DEFAULT_PROTECTED_PATHS', () => {
+    it('memory-bank entries point at memory-bank/, not .riper/', () => {
+      const memoryBankNames = ['projectbrief', 'systemPatterns', 'techContext', 'activeContext', 'progress', 'protection'];
+      for (const name of memoryBankNames) {
+        expect(DEFAULT_PROTECTED_PATHS[`memory-bank/${name}.md`]).toBe('locked');
+      }
+      // Make sure the old broken paths are gone
+      expect(DEFAULT_PROTECTED_PATHS['.riper/projectbrief.md']).toBeUndefined();
+      expect(DEFAULT_PROTECTED_PATHS['.riper/protection.md']).toBeUndefined();
+    });
+
+    it('keeps adapter-emitted rule file protections', () => {
+      expect(DEFAULT_PROTECTED_PATHS['.cursor/rules/riper.mdc']).toBe('locked');
+      expect(DEFAULT_PROTECTED_PATHS['.claude/CLAUDE.md']).toBe('locked');
+      expect(DEFAULT_PROTECTED_PATHS['.claude/rules/riper.md']).toBe('locked');
+      expect(DEFAULT_PROTECTED_PATHS['AGENTS.md']).toBe('locked');
     });
   });
 });

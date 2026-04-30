@@ -124,8 +124,12 @@ export interface ProtectionRegistry {
  * Default protected paths for RIPER memory bank
  */
 export const DEFAULT_PROTECTED_PATHS: ProtectionRegistry = {
-  '.riper/projectbrief.md': 'locked',
-  '.riper/protection.md': 'locked',
+  'memory-bank/projectbrief.md': 'locked',
+  'memory-bank/systemPatterns.md': 'locked',
+  'memory-bank/techContext.md': 'locked',
+  'memory-bank/activeContext.md': 'locked',
+  'memory-bank/progress.md': 'locked',
+  'memory-bank/protection.md': 'locked',
   '.cursor/rules/riper.mdc': 'locked',
   '.claude/CLAUDE.md': 'locked',
   '.claude/rules/riper.md': 'locked',
