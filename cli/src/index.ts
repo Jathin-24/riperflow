@@ -20,6 +20,7 @@ import { protectCommand } from './commands/protect.js';
 import { prdCommand } from './commands/prd.js';
 import { detectTools } from './utils/detection.js';
 import { loadConfig } from './config/loader.js';
+import { trackCommand } from './analytics/events.js';
 
 const program = new Command();
 
@@ -29,13 +30,20 @@ program
   .version('1.0.0');
 
 program
-  .hook('preAction', async () => {
+  .hook('preAction', async (_thisCommand, actionCommand) => {
     try {
       const config = await loadConfig();
       if (config) {
         const tools = await detectTools();
         if (tools.length > 0) {
           console.log(chalk.gray(`\nDetected tools: ${tools.map(t => t.displayName).join(', ')}\n`));
+        }
+        // Record this CLI invocation in analytics. Non-blocking — never let
+        // a logging hiccup break the command.
+        try {
+          await trackCommand(actionCommand.name(), actionCommand.args ?? []);
+        } catch {
+          /* ignore */
         }
       }
     } catch {
