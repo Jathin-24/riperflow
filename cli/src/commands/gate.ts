@@ -1,6 +1,7 @@
 import chalk from 'chalk';
-import { loadConfig, loadState, saveState } from '../config/loader.js';
+import { loadConfig, loadState, saveState, getDefaultState } from '../config/loader.js';
 import { GATES, GATE_ORDER, getGate, listGates, getNextGate, GateStage, GateStatus } from '../core/gates.js';
+import type { RuntimeState, GateStatuses } from '../core/types.js';
 
 export async function gateCommand(action?: string, gateArg?: string): Promise<void> {
   const config = await loadConfig();
@@ -11,7 +12,7 @@ export async function gateCommand(action?: string, gateArg?: string): Promise<vo
   }
 
   const state = await loadState();
-  const gateStatuses = (state as any)?.gateStatuses || {};
+  const gateStatuses: GateStatuses = state?.gateStatuses ?? {};
 
   if (!action) {
     showGateStatus(gateStatuses);
@@ -48,10 +49,10 @@ export async function gateCommand(action?: string, gateArg?: string): Promise<vo
   }
 }
 
-function showGateStatus(gateStatuses: Record<string, GateStatus>): void {
+function showGateStatus(gateStatuses: GateStatuses): void {
   console.log(chalk.bold('\n🚪 Quality Gates\n'));
-  
-  const currentGate = (gateStatuses as any)?.current || 'design';
+
+  const currentGate = gateStatuses.current ?? 'design';
   
   for (const gateId of GATE_ORDER) {
     const gate = GATES[gateId];
@@ -84,15 +85,15 @@ function showGateStatus(gateStatuses: Record<string, GateStatus>): void {
   console.log(chalk.gray('  riper-for-all gate reset      # Reset all gates\n'));
 }
 
-function listAllGates(gateStatuses: Record<string, GateStatus>): void {
+function listAllGates(gateStatuses: GateStatuses): void {
   const gates = listGates();
-  
+
   console.log(chalk.bold('\n🚪 Quality Gates\n'));
-  
+
   for (const gate of gates) {
-    const status = gateStatuses[gate.id];
+    const status = gateStatuses[gate.id as GateStage];
     const approved = status?.approved ? chalk.green('✓ Approved') : chalk.yellow('○ Pending');
-    
+
     console.log(`\n  ${gate.emoji} ${gate.name} (${gate.symbol})`);
     console.log(chalk.gray(`    ${gate.description}`));
     console.log(chalk.gray(`    Required: ${gate.requiredApprovals.join(', ')}`));
@@ -101,86 +102,76 @@ function listAllGates(gateStatuses: Record<string, GateStatus>): void {
   console.log('');
 }
 
-async function advanceGate(gateStatuses: Record<string, GateStatus>, state: any): Promise<void> {
-  const currentGate = ((gateStatuses.current as unknown) as GateStage) || 'design';
+async function advanceGate(gateStatuses: GateStatuses, state: RuntimeState | null): Promise<void> {
+  const currentGate: GateStage = gateStatuses.current ?? 'design';
   const nextGate = getNextGate(currentGate);
-  
+
   if (!nextGate) {
     console.log(chalk.yellow('\n⚠ Already at final gate!\n'));
     return;
   }
-  
-  (gateStatuses as any).current = nextGate;
-  
+
+  gateStatuses.current = nextGate;
+
   if (!state) {
-    state = { 
-      currentRole: 'dev', 
-      session: { startTime: new Date().toISOString(), modeHistory: [] },
-      gateStatuses 
-    };
+    state = { ...getDefaultState(), gateStatuses };
   }
-  
+
   state.gateStatuses = gateStatuses;
   await saveState(state);
-  
+
   const gate = GATES[nextGate];
   console.log(chalk.green(`\n✓ Advanced to ${gate.emoji} ${gate.name}\n`));
 }
 
-async function approveGate(gateId: string | undefined, gateStatuses: Record<string, GateStatus>, state: any): Promise<void> {
+async function approveGate(gateId: string | undefined, gateStatuses: GateStatuses, state: RuntimeState | null): Promise<void> {
   if (!gateId) {
     console.log(chalk.red('❌ Please specify a gate to approve.'));
     console.log(chalk.gray('Usage: riper-for-all gate approve <gate>\n'));
     process.exit(1);
   }
-  
+
   const gate = getGate(gateId);
   if (!gate) {
     console.log(chalk.red(`\n❌ Unknown gate: ${gateId}\n`));
     console.log(chalk.gray('Valid gates: design, development, testing, review, deploy\n'));
     process.exit(1);
   }
-  
-  if (!gateStatuses[gateId]) {
-    gateStatuses[gateId] = {
-      gate: gateId as GateStage,
+
+  const stageKey = gateId as GateStage;
+  if (!gateStatuses[stageKey]) {
+    gateStatuses[stageKey] = {
+      gate: stageKey,
       approved: false,
       approvers: [],
       timestamp: null
     };
   }
-  
-  gateStatuses[gateId].approved = true;
-  gateStatuses[gateId].timestamp = new Date().toISOString();
-  gateStatuses[gateId].approvers.push('current-user');
-  
+
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  gateStatuses[stageKey]!.approved = true;
+  gateStatuses[stageKey]!.timestamp = new Date().toISOString();
+  gateStatuses[stageKey]!.approvers.push('current-user');
+
   if (!state) {
-    state = { 
-      currentRole: 'dev', 
-      session: { startTime: new Date().toISOString(), modeHistory: [] },
-      gateStatuses 
-    };
+    state = { ...getDefaultState(), gateStatuses };
   }
-  
+
   state.gateStatuses = gateStatuses;
   await saveState(state);
-  
+
   console.log(chalk.green(`\n✓ Approved ${gate.emoji} ${gate.name}\n`));
 }
 
-async function resetGates(gateStatuses: Record<string, GateStatus>, state: any): Promise<void> {
-  gateStatuses = { current: 'design' } as any;
-  
+async function resetGates(gateStatuses: GateStatuses, state: RuntimeState | null): Promise<void> {
+  gateStatuses = { current: 'design' };
+
   if (!state) {
-    state = { 
-      currentRole: 'dev', 
-      session: { startTime: new Date().toISOString(), modeHistory: [] },
-      gateStatuses 
-    };
+    state = { ...getDefaultState(), gateStatuses };
   }
-  
+
   state.gateStatuses = gateStatuses;
   await saveState(state);
-  
+
   console.log(chalk.green('\n✓ All gates reset to design\n'));
 }

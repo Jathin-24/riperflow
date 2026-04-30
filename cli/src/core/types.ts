@@ -1,3 +1,6 @@
+import type { Role } from './roles.js';
+import type { GateStage, GateStatus } from './gates.js';
+
 export type Mode = 'research' | 'innovate' | 'plan' | 'execute' | 'review';
 
 export type Phase = 'uninitiated' | 'initializing' | 'development' | 'maintenance';
@@ -92,6 +95,15 @@ export interface ProjectConfig {
   };
 }
 
+export interface GateStatuses {
+  current?: GateStage;
+  design?: GateStatus;
+  development?: GateStatus;
+  testing?: GateStatus;
+  review?: GateStatus;
+  deploy?: GateStatus;
+}
+
 export interface RuntimeState {
   currentMode: Mode;
   currentPhase: Phase;
@@ -103,6 +115,8 @@ export interface RuntimeState {
       timestamp: string;
     }>;
   };
+  currentRole?: Role;
+  gateStatuses?: GateStatuses;
 }
 
 export interface AnalyticsEvent {

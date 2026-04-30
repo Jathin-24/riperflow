@@ -1,6 +1,7 @@
 import chalk from 'chalk';
-import { loadConfig, loadState, saveState } from '../config/loader.js';
+import { loadConfig, loadState, saveState, getDefaultState } from '../config/loader.js';
 import { ROLES, getRole, listRoles, Role } from '../core/roles.js';
+import type { RuntimeState } from '../core/types.js';
 import { getAnalyticsStorage, trackEvent } from '../analytics/index.js';
 
 export async function roleCommand(action?: string, roleArg?: string): Promise<void> {
@@ -12,7 +13,7 @@ export async function roleCommand(action?: string, roleArg?: string): Promise<vo
   }
 
   const state = await loadState();
-  const currentRole = (state as any)?.currentRole || 'dev';
+  const currentRole = state?.currentRole || 'dev';
 
   if (!action) {
     showRoleStatus(currentRole);
@@ -84,9 +85,9 @@ function listAllRoles(currentRole: string): void {
   console.log('');
 }
 
-async function switchRole(newRole: string, currentRole: string, state: any): Promise<void> {
+async function switchRole(newRole: string, currentRole: string, state: RuntimeState | null): Promise<void> {
   const role = getRole(newRole);
-  
+
   if (!role) {
     console.log(chalk.red(`\n❌ Unknown role: ${newRole}\n`));
     console.log(chalk.gray('Valid roles: po, architect, dev, qa, devops\n'));
@@ -94,10 +95,10 @@ async function switchRole(newRole: string, currentRole: string, state: any): Pro
   }
 
   if (!state) {
-    state = { currentRole: 'dev', session: { startTime: new Date().toISOString(), modeHistory: [] } };
+    state = { ...getDefaultState(), currentRole: 'dev' };
   }
-  
-  state.currentRole = newRole;
+
+  state.currentRole = newRole as Role;
   await saveState(state);
   
   console.log(chalk.green(`\n✓ Switched from ${ROLES[currentRole as Role]?.name || currentRole} to ${role.name}\n`));
