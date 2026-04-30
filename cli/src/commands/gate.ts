@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { loadConfig, loadState, saveState, getDefaultState } from '../config/loader.js';
 import { GATES, GATE_ORDER, getGate, listGates, getNextGate, GateStage, GateStatus } from '../core/gates.js';
 import type { RuntimeState, GateStatuses } from '../core/types.js';
+import { enforce, EnforcementError } from '../core/enforce.js';
 
 export async function gateCommand(action?: string, gateArg?: string): Promise<void> {
   const config = await loadConfig();
@@ -103,6 +104,16 @@ function listAllGates(gateStatuses: GateStatuses): void {
 }
 
 async function advanceGate(gateStatuses: GateStatuses, state: RuntimeState | null): Promise<void> {
+  try {
+    await enforce('write', '.riper/state.json');
+  } catch (e) {
+    if (e instanceof EnforcementError) {
+      console.log(chalk.red(`\n❌ ${e.message}\n`));
+      process.exit(1);
+    }
+    throw e;
+  }
+
   const currentGate: GateStage = gateStatuses.current ?? 'design';
   const nextGate = getNextGate(currentGate);
 
@@ -129,6 +140,16 @@ async function approveGate(gateId: string | undefined, gateStatuses: GateStatuse
     console.log(chalk.red('❌ Please specify a gate to approve.'));
     console.log(chalk.gray('Usage: riper-for-all gate approve <gate>\n'));
     process.exit(1);
+  }
+
+  try {
+    await enforce('write', '.riper/state.json');
+  } catch (e) {
+    if (e instanceof EnforcementError) {
+      console.log(chalk.red(`\n❌ ${e.message}\n`));
+      process.exit(1);
+    }
+    throw e;
   }
 
   const gate = getGate(gateId);
@@ -164,6 +185,16 @@ async function approveGate(gateId: string | undefined, gateStatuses: GateStatuse
 }
 
 async function resetGates(gateStatuses: GateStatuses, state: RuntimeState | null): Promise<void> {
+  try {
+    await enforce('write', '.riper/state.json');
+  } catch (e) {
+    if (e instanceof EnforcementError) {
+      console.log(chalk.red(`\n❌ ${e.message}\n`));
+      process.exit(1);
+    }
+    throw e;
+  }
+
   gateStatuses = { current: 'design' };
 
   if (!state) {

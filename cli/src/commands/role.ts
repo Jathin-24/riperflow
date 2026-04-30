@@ -3,6 +3,7 @@ import { loadConfig, loadState, saveState, getDefaultState } from '../config/loa
 import { ROLES, getRole, listRoles, Role } from '../core/roles.js';
 import type { RuntimeState } from '../core/types.js';
 import { getAnalyticsStorage, trackEvent } from '../analytics/index.js';
+import { enforce, EnforcementError } from '../core/enforce.js';
 
 export async function roleCommand(action?: string, roleArg?: string): Promise<void> {
   const config = await loadConfig();
@@ -86,6 +87,16 @@ function listAllRoles(currentRole: string): void {
 }
 
 async function switchRole(newRole: string, currentRole: string, state: RuntimeState | null): Promise<void> {
+  try {
+    await enforce('write', '.riper/state.json');
+  } catch (e) {
+    if (e instanceof EnforcementError) {
+      console.log(chalk.red(`\n❌ ${e.message}\n`));
+      process.exit(1);
+    }
+    throw e;
+  }
+
   const role = getRole(newRole);
 
   if (!role) {

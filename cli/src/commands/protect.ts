@@ -4,6 +4,7 @@ import { PROTECTION_LEVELS, getProtection, listProtectionLevels, ProtectionLevel
 import fs from 'fs-extra';
 import path from 'path';
 import { withLock } from '../memory/lock.js';
+import { enforce, EnforcementError } from '../core/enforce.js';
 
 export interface ProtectOptions {
   path?: string;
@@ -105,7 +106,17 @@ async function setProtection(target: string | undefined, level: string, protecti
     console.log(chalk.gray('Usage: riper-for-all protect set <path> <level>\n'));
     process.exit(1);
   }
-  
+
+  try {
+    await enforce('write', protectionFile);
+  } catch (e) {
+    if (e instanceof EnforcementError) {
+      console.log(chalk.red(`\n❌ ${e.message}\n`));
+      process.exit(1);
+    }
+    throw e;
+  }
+
   const protection = getProtection(level);
   if (!protection) {
     console.log(chalk.red(`\n❌ Unknown protection level: ${level}\n`));
@@ -138,7 +149,17 @@ async function removeProtection(target: string | undefined, protections: FilePro
     console.log(chalk.gray('Usage: riper-for-all protect remove <path>\n'));
     process.exit(1);
   }
-  
+
+  try {
+    await enforce('write', protectionFile);
+  } catch (e) {
+    if (e instanceof EnforcementError) {
+      console.log(chalk.red(`\n❌ ${e.message}\n`));
+      process.exit(1);
+    }
+    throw e;
+  }
+
   const existingIndex = protections.findIndex(p => p.path === target);
   if (existingIndex < 0) {
     console.log(chalk.yellow(`\n⚠ ${target} is not protected\n`));

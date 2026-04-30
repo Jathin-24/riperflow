@@ -3,6 +3,7 @@ import { loadConfig } from '../config/loader.js';
 import fs from 'fs-extra';
 import path from 'path';
 import { withLock } from '../memory/lock.js';
+import { enforce, EnforcementError } from '../core/enforce.js';
 
 export interface PRD {
   id: string;
@@ -109,7 +110,18 @@ async function listPRDs(prdDir: string): Promise<void> {
 async function createPRD(prdDir: string, title?: string): Promise<void> {
   const prdTitle = title || 'New Feature';
   const id = prdTitle.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-  
+  const filePath = path.join(prdDir, `${id}.json`);
+
+  try {
+    await enforce('create', filePath);
+  } catch (e) {
+    if (e instanceof EnforcementError) {
+      console.log(chalk.red(`\n❌ ${e.message}\n`));
+      process.exit(1);
+    }
+    throw e;
+  }
+
   const prd: PRD = {
     id,
     title: prdTitle,
@@ -143,8 +155,7 @@ Any technical considerations.
 - Dependency 1
 `
   };
-  
-  const filePath = path.join(prdDir, `${id}.json`);
+
   await withLock(filePath, async () => {
     await fs.writeJson(filePath, prd, { spaces: 2 });
   });
@@ -204,14 +215,24 @@ async function updatePRDStatus(prdDir: string, id: string | undefined, status: s
     console.log(chalk.gray(`Usage: riper-for-all prd ${status} <id>\n`));
     process.exit(1);
   }
-  
+
   const filePath = path.join(prdDir, `${id}.json`);
-  
+
+  try {
+    await enforce('write', filePath);
+  } catch (e) {
+    if (e instanceof EnforcementError) {
+      console.log(chalk.red(`\n❌ ${e.message}\n`));
+      process.exit(1);
+    }
+    throw e;
+  }
+
   if (!await fs.pathExists(filePath)) {
     console.log(chalk.red(`\n❌ PRD not found: ${id}\n`));
     process.exit(1);
   }
-  
+
   const prd: PRD = await fs.readJson(filePath);
   prd.status = status as PRD['status'];
   prd.updatedAt = new Date().toISOString();
