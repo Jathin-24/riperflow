@@ -111,13 +111,16 @@ export class AnalyticsStorage {
   }
 }
 
-let storageInstance: AnalyticsStorage | null = null;
+const storageInstances: Map<string, AnalyticsStorage> = new Map();
 
 export function getAnalyticsStorage(projectPath?: string): AnalyticsStorage {
-  if (!storageInstance) {
-    storageInstance = new AnalyticsStorage(projectPath);
+  const resolved = projectPath ?? process.cwd();
+  let instance = storageInstances.get(resolved);
+  if (!instance) {
+    instance = new AnalyticsStorage(resolved);
+    storageInstances.set(resolved, instance);
   }
-  return storageInstance;
+  return instance;
 }
 
 export function createAnalyticsStorage(projectPath?: string): AnalyticsStorage {
