@@ -11,6 +11,11 @@ RIPER-for-All brings the RIPER (Research, Innovate, Plan, Execute, Review) devel
 - OpenCode
 - KiloCode
 - VS Code
+- Roo Code
+- Aider
+- Windsurf
+- Cline
+- Codex CLI
 
 ## Features
 
@@ -45,8 +50,9 @@ RIPER-for-All brings the RIPER (Research, Innovate, Plan, Execute, Review) devel
 - **Weekly Reports** - Activity summaries and violation tracking
 
 ### Performance Features
-- **Tiered Context Loading** - Progressive memory bank loading (Core → Active → Full)
-- **File Locking** - Concurrent modification prevention with proper-lockfile
+- **File Locking** - Concurrent modification prevention with proper-lockfile across every persistent write path
+- **Memory Truncation** - Bank files auto-archived when they exceed their declared maxSize during sync
+- **Analytics Snapshot Cache** - Single read serves stats / mode history / command usage aggregations
 
 ### MCP Integration
 - GitHub
@@ -88,7 +94,10 @@ The AI will automatically:
 # CLI commands
 npx riper-for-all init
 npx riper-for-all mode research
+npx riper-for-all sync                  # Regenerate per-tool rule files
 npx riper-for-all dashboard
+npx riper-for-all dashboard web --detach  # Background, then 'dashboard stop'
+npx riper-for-all update                # Check npm registry for newer version
 ```
 
 ### Setup AI Tools
@@ -104,7 +113,12 @@ npx riper-for-all setup --tools cursor,claude-code,opencode,kilocode
 | Cursor | `.cursor/rules/` |
 | OpenCode | (project root) `AGENTS.md` + `opencode.json` |
 | KiloCode | `.kilocode/rules/` |
-| VS Code | `.vscode/` |
+| VS Code | `.vscode/.riper.md` |
+| Roo Code | `.roo/rules/` |
+| Aider | (project root) `CONVENTIONS.md` + `.aider.conf.yml` + `.aider/` |
+| Windsurf | `.windsurf/` (rules + `cascade.md`) |
+| Cline | `.cline/instructions/` + `global_instructions.json` + `settings.json` |
+| Codex CLI | (project root) `AGENT.md` + `.codex/` |
 
 ### MCP Services
 ```bash
@@ -124,10 +138,12 @@ npx riper-for-all dashboard web --detach
 
 ### Analytics
 ```bash
-# View analytics
-riper-for-all analytics stats
-riper-for-all analytics weekly
-riper-for-all analytics migrate  # Migrate JSONL to SQLite
+riper-for-all analytics                 # Summary (default 'stats')
+riper-for-all analytics stats           # JSONL-backed aggregates
+riper-for-all analytics weekly          # SQLite-backed weekly summary
+riper-for-all analytics export --format json --output events.json
+riper-for-all analytics export --format csv  # CSV to stdout
+riper-for-all analytics migrate         # Rebuild SQLite index from JSONL
 ```
 
 ### BMAD Commands
