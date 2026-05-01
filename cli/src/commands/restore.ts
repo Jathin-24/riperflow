@@ -4,6 +4,7 @@ import { getRiperDir, getMemoryBankDir } from '../config/loader.js';
 import fs from 'fs-extra';
 import path from 'path';
 import { autoBackupFile } from './backup.js';
+import { assertWithinDir, PathTraversalError } from '../utils/path-safety.js';
 
 export async function restoreCommand(options: any): Promise<void> {
   const config = await loadConfig();
@@ -32,7 +33,17 @@ export async function restoreCommand(options: any): Promise<void> {
   }
 
   const backupPath = path.join(backupsDir, backupFile);
-  
+
+  try {
+    assertWithinDir(backupPath, [backupsDir]);
+  } catch (e) {
+    if (e instanceof PathTraversalError) {
+      console.log(chalk.red(`\n❌ Invalid backup name — path escapes the backups directory.\n`));
+      process.exit(1);
+    }
+    throw e;
+  }
+
   if (!(await fs.pathExists(backupPath))) {
     console.log(chalk.red(`❌ Backup not found: ${backupFile}`));
     console.log(chalk.gray('\n💡 List backups: riper-for-all backup --list\n'));
@@ -72,6 +83,16 @@ export async function restoreCommand(options: any): Promise<void> {
       ? memoryBankCandidate
       : riperCandidate;
     console.log(chalk.gray(`  (target file did not exist; will create at ${restorePath})`));
+  }
+
+  try {
+    assertWithinDir(restorePath, [memoryBankDir, riperDir]);
+  } catch (e) {
+    if (e instanceof PathTraversalError) {
+      console.log(chalk.red(`\n❌ Invalid restore target — path escapes the project directories.\n`));
+      process.exit(1);
+    }
+    throw e;
   }
 
   const targetExists = await fs.pathExists(restorePath);

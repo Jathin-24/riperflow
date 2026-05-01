@@ -4,6 +4,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { withLock } from '../memory/lock.js';
 import { enforce, EnforcementError } from '../core/enforce.js';
+import { assertWithinDir, PathTraversalError } from '../utils/path-safety.js';
 
 export interface PRD {
   id: string;
@@ -172,12 +173,22 @@ async function viewPRD(prdDir: string, id?: string): Promise<void> {
   }
   
   const filePath = path.join(prdDir, `${id}.json`);
-  
+
+  try {
+    assertWithinDir(filePath, [prdDir]);
+  } catch (e) {
+    if (e instanceof PathTraversalError) {
+      console.log(chalk.red(`\n❌ Invalid PRD id — path escapes the PRD directory.\n`));
+      process.exit(1);
+    }
+    throw e;
+  }
+
   if (!await fs.pathExists(filePath)) {
     console.log(chalk.red(`\n❌ PRD not found: ${id}\n`));
     process.exit(1);
   }
-  
+
   const prd: PRD = await fs.readJson(filePath);
   
   console.log(chalk.bold(`\n📄 ${prd.title}\n`));
@@ -198,6 +209,16 @@ async function editPRD(prdDir: string, id?: string): Promise<void> {
   }
 
   const filePath = path.join(prdDir, `${id}.json`);
+
+  try {
+    assertWithinDir(filePath, [prdDir]);
+  } catch (e) {
+    if (e instanceof PathTraversalError) {
+      console.log(chalk.red(`\n❌ Invalid PRD id — path escapes the PRD directory.\n`));
+      process.exit(1);
+    }
+    throw e;
+  }
 
   if (!await fs.pathExists(filePath)) {
     console.log(chalk.red(`\n❌ PRD not found: ${id}\n`));
@@ -228,6 +249,16 @@ async function updatePRDStatus(prdDir: string, id: string | undefined, status: s
   }
 
   const filePath = path.join(prdDir, `${id}.json`);
+
+  try {
+    assertWithinDir(filePath, [prdDir]);
+  } catch (e) {
+    if (e instanceof PathTraversalError) {
+      console.log(chalk.red(`\n❌ Invalid PRD id — path escapes the PRD directory.\n`));
+      process.exit(1);
+    }
+    throw e;
+  }
 
   try {
     await enforce('write', filePath);
