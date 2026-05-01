@@ -5,6 +5,7 @@ import { detectTools } from '../utils/detection.js';
 import { MEMORY_FILES } from '../core/modes.js';
 import { getMemoryBankDir } from '../config/loader.js';
 import fs from 'fs-extra';
+import path from 'node:path';
 
 interface InitOptions {
   tools?: string;
@@ -138,7 +139,7 @@ async function getProjectName(): Promise<string> {
       type: 'input',
       name: 'name',
       message: 'Project name:',
-      default: process.cwd().split('/').pop() || 'my-project',
+      default: path.basename(process.cwd()) || 'my-project',
       validate: (input: string) => input.length > 0 || 'Name is required'
     }
   ]);
