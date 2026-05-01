@@ -1,14 +1,17 @@
 import express from 'express';
-import { createServer } from 'http';
+import { createServer, type Server as HttpServer } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { promises as fsPromises } from 'node:fs';
+import crypto from 'node:crypto';
 import chalk from 'chalk';
+import fs from 'fs-extra';
 import { loadConfig, loadState } from '../config/loader.js';
 import { MODES, PHASES, MEMORY_FILES } from '../core/modes.js';
 import { getAnalyticsStorage } from '../analytics/index.js';
 import { createFileWatcher, stopFileWatcher, getFileWatcher } from './watcher.js';
+import { enforce, EnforcementError } from '../core/enforce.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,25 +30,43 @@ function broadcastUpdate(data: unknown): void {
 
 export interface WebDashboardOptions {
   port: number;
+  host?: string;
   detach: boolean;
 }
 
-export async function startWebDashboard(options: WebDashboardOptions): Promise<void> {
+async function ensureDashboardToken(projectPath: string): Promise<string> {
+  const tokenPath = path.join(projectPath, '.riper', 'dashboard.token');
+  if (await fs.pathExists(tokenPath)) {
+    const existing = (await fs.readFile(tokenPath, 'utf-8')).trim();
+    if (existing.length >= 32) return existing;
+  }
+  const token = crypto.randomBytes(32).toString('hex');
+  await fs.ensureDir(path.dirname(tokenPath));
+  await fs.writeFile(tokenPath, token + '\n', { encoding: 'utf-8', mode: 0o600 });
+  return token;
+}
+
+export async function startWebDashboard(options: WebDashboardOptions): Promise<HttpServer> {
   const app = express();
   const server = createServer(app);
-  
+  const host = options.host ?? '127.0.0.1';
+
   wss = new WebSocketServer({ server, path: '/ws' });
-  
+
   wss.on('connection', (ws) => {
     clients.add(ws);
     console.log(chalk.gray('  WebSocket client connected'));
-    
+
     ws.on('close', () => {
       clients.delete(ws);
     });
   });
 
   const config = await loadConfig();
+  const token = config
+    ? await ensureDashboardToken(config.projectPath)
+    : crypto.randomBytes(32).toString('hex');
+
   if (config) {
     const watcher = await createFileWatcher(config.projectPath);
     watcher.on('fileChange', (data) => {
@@ -56,11 +77,33 @@ export async function startWebDashboard(options: WebDashboardOptions): Promise<v
   app.use(express.json());
   app.use(express.static(path.join(__dirname, 'public')));
 
+  // Security headers — applies to all responses
+  app.use((_req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net");
+    next();
+  });
+
+  // Token gate — only applied to mutating endpoints
+  function requireToken(req: express.Request, res: express.Response, next: express.NextFunction): void {
+    const header = req.header('X-RIPER-Token') ?? '';
+    // Constant-time compare — pre-check length to avoid timingSafeEqual throwing
+    // when buffers are of different lengths.
+    const a = Buffer.from(header);
+    const b = Buffer.from(token);
+    if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
+      res.status(401).json({ error: 'invalid or missing X-RIPER-Token header' });
+      return;
+    }
+    next();
+  }
+
   app.get('/api/status', async (req, res) => {
     try {
       const config = await loadConfig();
       const state = await loadState();
-      
+
       if (!config || !state) {
         return res.status(404).json({ error: 'RIPER not initialized' });
       }
@@ -149,22 +192,33 @@ export async function startWebDashboard(options: WebDashboardOptions): Promise<v
     return;
   });
 
-  app.post('/api/mode', async (req, res) => {
+  app.post('/api/mode', requireToken, async (req, res) => {
     try {
       const { mode } = req.body;
       if (!mode) {
-        return res.status(400).json({ error: 'Mode is required' });
+        res.status(400).json({ error: 'Mode is required' });
+        return;
+      }
+
+      // Wire enforcement so dashboard mode-flips honor the same gate as CLI
+      try {
+        await enforce('write', '.riper/state.json');
+      } catch (e) {
+        if (e instanceof EnforcementError) {
+          res.status(403).json({ error: e.message });
+          return;
+        }
+        throw e;
       }
 
       const { switchMode } = await import('../core/workflow.js');
       await switchMode(mode as any);
-      
+
       broadcastUpdate({ type: 'modeChange', mode });
       res.json({ success: true, message: `Switched to ${mode} mode` });
     } catch (error) {
       res.status(500).json({ error: String(error) });
     }
-    return;
   });
 
   app.get('/api/watcher', (req, res) => {
@@ -175,7 +229,7 @@ export async function startWebDashboard(options: WebDashboardOptions): Promise<v
     });
   });
 
-  app.post('/api/watcher/stop', async (req, res) => {
+  app.post('/api/watcher/stop', requireToken, async (_req, res) => {
     await stopFileWatcher();
     res.json({ success: true, message: 'File watcher stopped' });
   });
@@ -324,7 +378,7 @@ export async function startWebDashboard(options: WebDashboardOptions): Promise<v
     function connectWebSocket() {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       ws = new WebSocket(\`\${protocol}//\${window.location.host}/ws\`);
-      
+
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if (data.type === 'fileChange' || data.type === 'modeChange') {
@@ -332,12 +386,12 @@ export async function startWebDashboard(options: WebDashboardOptions): Promise<v
           fetchStatus();
         }
       };
-      
+
       ws.onclose = () => {
         console.log('WebSocket disconnected, reconnecting...');
         setTimeout(connectWebSocket, 3000);
       };
-      
+
       ws.onerror = (error) => {
         console.error('WebSocket error:', error);
       };
@@ -349,7 +403,7 @@ export async function startWebDashboard(options: WebDashboardOptions): Promise<v
           fetch('/api/status'),
           fetch('/api/analytics')
         ]);
-        
+
         const status = await statusRes.json();
         const analytics = await analyticsRes.json();
 
@@ -381,7 +435,7 @@ export async function startWebDashboard(options: WebDashboardOptions): Promise<v
 
     function updateChart(modeHistory) {
       const ctx = document.getElementById('modeChart').getContext('2d');
-      
+
       if (modeChart) {
         modeChart.destroy();
       }
@@ -430,22 +484,25 @@ export async function startWebDashboard(options: WebDashboardOptions): Promise<v
   await new Promise<void>((resolve, reject) => {
     server.once('error', (err: any) => {
       if (err.code === 'EADDRINUSE') {
-        console.log(chalk.red(`\n❌ Dashboard already running on :${options.port}, or port is in use by another process.`));
+        console.log(chalk.red(`\n❌ Dashboard already running on ${host}:${options.port}, or port is in use by another process.`));
         console.log(chalk.gray(`💡 Use --port <n> to pick a different port; or 'riper-for-all dashboard stop' to stop a detached instance.\n`));
         process.exit(1);
       }
       reject(err);
     });
 
-    server.listen(options.port, () => {
+    server.listen(options.port, host, () => {
       console.log(chalk.cyan.bold('\n🌐 RIPER Web Dashboard'));
       console.log(chalk.gray('─'.repeat(40)));
-      console.log(`  Local:   http://localhost:${options.port}`);
+      console.log(`  Local:   http://${host}:${options.port}`);
       console.log(`  Status:  ${chalk.green('Running')}`);
-      console.log(`  WebSocket: ws://localhost:${options.port}/ws\n`);
-
+      console.log(`  WebSocket: ws://${host}:${options.port}/ws`);
+      if (host !== '127.0.0.1' && host !== 'localhost') {
+        console.log(chalk.yellow(`  ⚠ Bound to ${host} — accessible from the network. Auth token required for mutating endpoints.`));
+      }
+      console.log(chalk.gray(`  Auth token: .riper/dashboard.token (chmod 600)`));
       if (!options.detach) {
-        console.log(chalk.gray('  Press Ctrl+C to stop\n'));
+        console.log(chalk.gray('\n  Press Ctrl+C to stop\n'));
       }
       resolve();
     });
@@ -459,4 +516,6 @@ export async function startWebDashboard(options: WebDashboardOptions): Promise<v
   };
   process.once('SIGINT', () => shutdown('SIGINT'));
   process.once('SIGTERM', () => shutdown('SIGTERM'));
+
+  return server;
 }

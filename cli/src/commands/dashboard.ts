@@ -10,6 +10,7 @@ export interface DashboardOptions {
   watch?: boolean;
   interval?: number;
   port?: string;
+  host?: string;
   detach?: boolean;
 }
 
@@ -48,7 +49,7 @@ export async function dashboardCommand(type?: string, options?: DashboardOptions
       // skips this branch and runs the server directly. Detach + unref so
       // parent exits.
       const cliEntry = path.resolve(process.argv[1] ?? '');
-      const child = spawn(process.execPath, [cliEntry, 'dashboard', 'web', '--port', String(portNum)], {
+      const child = spawn(process.execPath, [cliEntry, 'dashboard', 'web', '--port', String(portNum), '--host', options?.host ?? '127.0.0.1'], {
         env: { ...process.env, RIPER_DASHBOARD_CHILD: '1' },
         detached: true,
         stdio: 'ignore',
@@ -70,6 +71,7 @@ export async function dashboardCommand(type?: string, options?: DashboardOptions
     const { startWebDashboard } = await import('../dashboard/index.js');
     await startWebDashboard({
       port: portNum,
+      host: options?.host ?? '127.0.0.1',
       detach: !!options?.detach || process.env.RIPER_DASHBOARD_CHILD === '1',
     });
     return;

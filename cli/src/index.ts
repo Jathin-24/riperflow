@@ -117,6 +117,7 @@ program
   .argument('[type]', 'Dashboard type: tui, web, stop', 'tui')
   .option('-d, --detach', 'Run web dashboard in detached mode')
   .option('-p, --port <port>', 'Web dashboard port', '3456')
+  .option('-H, --host <host>', 'Web dashboard bind address (default 127.0.0.1; use 0.0.0.0 for LAN)', '127.0.0.1')
   .option('-w, --watch', 'Watch mode (auto-refresh for TUI)')
   .action(dashboardCommand);
 
