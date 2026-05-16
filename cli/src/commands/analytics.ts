@@ -87,7 +87,7 @@ async function runWeekly(projectPath: string): Promise<void> {
 
   if (!db.isSQLiteAvailable()) {
     console.log(chalk.yellow('\n⚠ SQLite is not available — weekly summary requires the optional better-sqlite3 dependency.'));
-    console.log(chalk.gray('  Falling back to JSONL-based stats. Run "riper-for-all analytics stats" instead.\n'));
+    console.log(chalk.gray('  Falling back to JSONL-based stats. Run "riperflow analytics stats" instead.\n'));
     await db.close();
     return await runStats(projectPath);
   }

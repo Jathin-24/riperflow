@@ -92,4 +92,4 @@
 
 ---
 
-*Β | BMAD Roles | RIPER-for-All*
+*Β | BMAD Roles | Riperflow*

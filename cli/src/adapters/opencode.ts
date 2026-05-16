@@ -173,7 +173,7 @@ export class OpenCodeAdapter extends BaseAdapter {
       currentGate: this.currentGate
     });
     
-    const content = `# RIPER-for-All - OpenCode Agent Configuration
+    const content = `# Riperflow - OpenCode Agent Configuration
 *Generated: ${new Date().toISOString().split('T')[0]}*
 
 ${universalRules}
@@ -260,7 +260,7 @@ Configure MCP servers in opencode.json:
 
 ## 🤖 AI Context
 
-You are an OpenCode agent operating under RIPER-for-All.
+You are an OpenCode agent operating under Riperflow.
 Your behavior is controlled by:
 - Current Agent (maps to Ω mode)
 - Current Role (ρ) permissions
@@ -272,7 +272,7 @@ Always verify permissions before operations.
 Always log actions to memory bank.
 
 ---
-*OpenCode Adapter | RIPER-for-All v1.0*
+*OpenCode Adapter | Riperflow v1.0*
 `;
     await fs.ensureFile(filePath);
     await fs.outputFile(filePath, content, 'utf-8');

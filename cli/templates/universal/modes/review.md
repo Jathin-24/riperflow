@@ -54,4 +54,4 @@
 
 ---
 
-*Ω₅ | Review Mode | RIPER-for-All v1.0*
+*Ω₅ | Review Mode | Riperflow v1.0*

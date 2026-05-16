@@ -1,4 +1,4 @@
-# Getting Started with RIPER-for-All
+# Getting Started with Riperflow
 
 ## Quick Start
 
@@ -6,7 +6,7 @@
 
 ```bash
 cd your-project
-npx riper-for-all init
+npx riperflow init
 ```
 
 This creates:
@@ -17,7 +17,7 @@ This creates:
 
 ```bash
 # Select which tools to configure
-npx riper-for-all setup --tools cursor,claude-code,opencode,kilocode
+npx riperflow setup --tools cursor,claude-code,opencode,kilocode
 ```
 
 ### Tool Rule Locations
@@ -58,8 +58,8 @@ The AI will automatically:
 #### Option B: From Terminal
 
 ```bash
-npx riper-for-all mode research
-npx riper-for-all mode execute
+npx riperflow mode research
+npx riperflow mode execute
 # etc.
 ```
 
@@ -72,12 +72,12 @@ Just tell the AI what you want to do - it already knows the mode from the rules!
 
 **Or check mode manually:**
 ```bash
-npx riper-for-all mode
+npx riperflow mode
 ```
 
 **Open dashboard:**
 ```bash
-npx riper-for-all dashboard
+npx riperflow dashboard
 ```
 
 ### Working in Modes
@@ -108,23 +108,23 @@ Always keep these files updated:
 
 Assign roles to team members:
 ```bash
-npx riper-for-all role set architect
+npx riperflow role set architect
 ```
 
 ### Quality Gates
 
 Progress through gates:
 ```bash
-npx riper-for-all gate advance
-npx riper-for-all gate approve design
+npx riperflow gate advance
+npx riperflow gate approve design
 ```
 
 ### PRD Management
 
 Create requirements documents:
 ```bash
-npx riper-for-all prd create "User Authentication"
-npx riper-for-all prd approve user-authentication
+npx riperflow prd create "User Authentication"
+npx riperflow prd approve user-authentication
 ```
 
 ## MCP Integration
@@ -133,13 +133,13 @@ npx riper-for-all prd approve user-authentication
 
 ```bash
 # Add GitHub MCP
-npx riper-for-all mcp add github
+npx riperflow mcp add github
 
 # Add Web Search MCP
-npx riper-for-all mcp add websearch
+npx riperflow mcp add websearch
 
 # Generate config files for all tools
-npx riper-for-all mcp generate
+npx riperflow mcp generate
 ```
 
 ### Environment Variables
@@ -158,7 +158,7 @@ export BRAVE_API_KEY=your-key
 ### TUI Dashboard
 
 ```bash
-npx riper-for-all dashboard
+npx riperflow dashboard
 ```
 
 Shows:
@@ -171,10 +171,10 @@ Shows:
 
 ```bash
 # Start in background
-npx riper-for-all dashboard web --detach
+npx riperflow dashboard web --detach
 
 # Or interactive
-npx riper-for-all dashboard web
+npx riperflow dashboard web
 ```
 
 Features:
@@ -206,13 +206,13 @@ Features:
 ### Reset Project
 ```bash
 rm -rf .riper memory-bank
-npx riper-for-all init
+npx riperflow init
 ```
 
 ### Check Status
 ```bash
-npx riper-for-all status
-npx riper-for-all analytics
+npx riperflow status
+npx riperflow analytics
 ```
 
 ### View Logs

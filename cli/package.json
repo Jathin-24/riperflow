@@ -1,11 +1,11 @@
 {
-  "name": "riper-for-all",
+  "name": "riperflow",
   "version": "1.0.0",
   "description": "Universal RIPER framework for AI coding tools - Works across Cursor, Claude Code, OpenCode and more",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "riper-for-all": "./dist/index.js"
+    "riperflow": "./dist/index.js"
   },
   "files": [
     "dist"
@@ -33,7 +33,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/riper-for-all/riper-for-all"
+    "url": "https://github.com/riperflow/riperflow"
   },
   "engines": {
     "node": ">=20.0.0"

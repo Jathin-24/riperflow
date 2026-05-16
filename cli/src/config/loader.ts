@@ -74,11 +74,11 @@ export function getMemoryBankDir(): string {
 }
 
 export function getGlobalConfigPath(): string {
-  return path.join(homedir(), '.config', 'riper-for-all', 'config.json');
+  return path.join(homedir(), '.config', 'riperflow', 'config.json');
 }
 
 export function getGlobalDir(): string {
-  return path.join(homedir(), '.config', 'riper-for-all');
+  return path.join(homedir(), '.config', 'riperflow');
 }
 
 export async function ensureDirectories(): Promise<void> {

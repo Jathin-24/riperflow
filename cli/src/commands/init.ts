@@ -13,7 +13,7 @@ interface InitOptions {
 }
 
 export async function initCommand(options: InitOptions): Promise<void> {
-  console.log(chalk.cyan.bold('\n🚀 Initializing RIPER-for-All...\n'));
+  console.log(chalk.cyan.bold('\n🚀 Initializing Riperflow...\n'));
 
   // Non-TTY (CI, pipes, Docker, scripted demo recording) cannot answer
   // inquirer prompts. Fall back to default answers instead of crashing
@@ -116,18 +116,18 @@ export async function initCommand(options: InitOptions): Promise<void> {
   console.log(chalk.cyan('\n🔄 Initializing workflow state...'));
   await initializeState();
 
-  console.log(chalk.green.bold('\n✅ RIPER-for-All initialized successfully!\n'));
+  console.log(chalk.green.bold('\n✅ Riperflow initialized successfully!\n'));
   
   console.log(chalk.cyan('Next steps:'));
   console.log(chalk.gray('  1. Switch to a mode:'));
-  console.log(chalk.gray('     riper-for-all mode research'));
+  console.log(chalk.gray('     riperflow mode research'));
   console.log(chalk.gray('     or use shortcuts: r, i, p, e, rev'));
   console.log(chalk.gray(''));
   console.log(chalk.gray('  2. Open dashboard:'));
-  console.log(chalk.gray('     riper-for-all dashboard'));
+  console.log(chalk.gray('     riperflow dashboard'));
   console.log(chalk.gray(''));
   console.log(chalk.gray('  3. Check status:'));
-  console.log(chalk.gray('     riper-for-all status\n'));
+  console.log(chalk.gray('     riperflow status\n'));
 }
 
 async function getProjectName(): Promise<string> {

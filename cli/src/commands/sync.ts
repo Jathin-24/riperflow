@@ -70,7 +70,7 @@ export async function syncCommand(options: any): Promise<void> {
 
   if (result.updated.length === 0 && result.skipped.length === 0) {
     console.log(chalk.yellow('⚠️  No tools enabled in config.tools — nothing to sync.\n'));
-    console.log(chalk.gray('💡 Enable tools via riper-for-all setup --tools <ids>\n'));
+    console.log(chalk.gray('💡 Enable tools via riperflow setup --tools <ids>\n'));
     return;
   }
 

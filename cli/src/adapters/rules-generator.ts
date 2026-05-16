@@ -123,7 +123,7 @@ export function generateHybridRules(options: {
 }): string {
   const { tool = 'universal', currentMode, currentRole, currentGate } = options;
   
-  return `# RIPER-for-All - ${tool} Hybrid Rules
+  return `# Riperflow - ${tool} Hybrid Rules
 *Version: 1.0.0 | Generated: ${new Date().toISOString().split('T')[0]}*
 
 ## 📋 TL;DR (Executive Summary)
@@ -219,7 +219,7 @@ ${generateBMADContext(currentMode, currentRole, currentGate)}
 *Violation of these rules will be logged to \`.riper/violations.jsonl\`*
 
 ---
-*RIPER-for-All v1.0 | ${tool} Adapter | Generated: ${new Date().toISOString().split('T')[0]}*
+*Riperflow v1.0 | ${tool} Adapter | Generated: ${new Date().toISOString().split('T')[0]}*
 `;
 }
 
@@ -281,7 +281,7 @@ export function generateUniversalRules(options?: {
       .replace(/{{BMAD_CONTEXT}}/g, opts.includeBMAD ? generateBMADContext(opts.currentMode, opts.currentRole, opts.currentGate) : '');
   }
   
-  return `# RIPER-for-All - Universal Rules
+  return `# Riperflow - Universal Rules
 *Version: 1.0.0 | Generated: ${new Date().toISOString().split('T')[0]}*
 
 ## 📚 Quick Reference
@@ -356,7 +356,7 @@ ${opts.includeBMAD ? generateBMADContext(opts.currentMode, opts.currentRole, opt
 State: \`.riper/state.json\` | Memory: 📂*.md | Backups: 📦*/
 
 ---
-*RIPER-for-All - Universal AI Development Framework*
+*Riperflow - Universal AI Development Framework*
 `;
 }
 
@@ -374,7 +374,7 @@ export function generateSymbolicRules(options?: {
       .replace(/{{GATE}}/g, options?.currentGate || 'unknown');
   }
   
-  return `# RIPER-for-All Σ
+  return `# Riperflow Σ
 *2026 | v1.0*
 
 ## Ω/ℙ/Σ/Ψ/Γ System

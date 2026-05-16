@@ -156,7 +156,7 @@ export async function detectAndPrintTools(): Promise<void> {
   
   if (tools.length === 0) {
     console.log(chalk.yellow('No AI coding tools detected in this project.'));
-    console.log(chalk.gray('Run "riper-for-all setup --tools cursor,claude-code,opencode" to configure.'));
+    console.log(chalk.gray('Run "riperflow setup --tools cursor,claude-code,opencode" to configure.'));
     return;
   }
   

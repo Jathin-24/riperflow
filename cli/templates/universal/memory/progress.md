@@ -80,4 +80,4 @@
 
 ---
 
-*Σ₅ | Progress Tracker | RIPER-for-All*
+*Σ₅ | Progress Tracker | Riperflow*

@@ -1,4 +1,4 @@
-# RIPER-for-All - Roo Code Rules
+# Riperflow - Roo Code Rules
 *Version: 1.0 | Generated: {{DATE}}*
 
 ## ⚠️ CRITICAL: YOU MUST ALWAYS ACKNOWLEDGE MODE SWITCHES

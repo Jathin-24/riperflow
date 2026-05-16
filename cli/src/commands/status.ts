@@ -6,11 +6,11 @@ export async function statusCommand(): Promise<void> {
   const config = await loadConfig();
   const state = await loadState();
 
-  console.log(chalk.bold('\n📊 RIPER-for-All Status\n'));
+  console.log(chalk.bold('\n📊 Riperflow Status\n'));
 
   if (!config || !state) {
     console.log(chalk.yellow('⚠ RIPER is not initialized.\n'));
-    console.log(chalk.gray('Run "riper-for-all init" to get started.\n'));
+    console.log(chalk.gray('Run "riperflow init" to get started.\n'));
     return;
   }
 

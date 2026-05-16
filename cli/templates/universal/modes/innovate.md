@@ -56,4 +56,4 @@
 
 ---
 
-*Ω₂ | Innovate Mode | RIPER-for-All v1.0*
+*Ω₂ | Innovate Mode | Riperflow v1.0*

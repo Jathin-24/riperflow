@@ -286,7 +286,7 @@ export async function startWebDashboard(options: WebDashboardOptions): Promise<H
     server.once('error', (err: any) => {
       if (err.code === 'EADDRINUSE') {
         console.log(chalk.red(`\n❌ Dashboard already running on ${host}:${options.port}, or port is in use by another process.`));
-        console.log(chalk.gray(`💡 Use --port <n> to pick a different port; or 'riper-for-all dashboard stop' to stop a detached instance.\n`));
+        console.log(chalk.gray(`💡 Use --port <n> to pick a different port; or 'riperflow dashboard stop' to stop a detached instance.\n`));
         process.exit(1);
       }
       reject(err);

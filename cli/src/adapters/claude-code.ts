@@ -73,7 +73,7 @@ export class ClaudeCodeAdapter extends BaseAdapter {
       currentGate: this.currentGate
     });
     
-    const content = `# RIPER-for-All - Claude Code Configuration
+    const content = `# Riperflow - Claude Code Configuration
 *Generated: ${new Date().toISOString().split('T')[0]}*
 
 ${universalRules}
@@ -157,7 +157,7 @@ Always load these files at conversation start:
 
 ## 🤖 AI Context
 
-You are operating under RIPER-for-All framework. Your behavior is governed by:
+You are operating under Riperflow framework. Your behavior is governed by:
 - Current Mode (Ω): Defines your permissions
 - Current Role (ρ): Defines your responsibilities  
 - Current Gate (Γ): Defines workflow stage
@@ -168,7 +168,7 @@ Always respect mode permissions (ℙ matrix).
 Always log significant actions to memory bank.
 
 ---
-*Claude Code Adapter | RIPER-for-All v1.0*
+*Claude Code Adapter | Riperflow v1.0*
 `;
     await fs.ensureFile(claudeMdPath);
     await fs.outputFile(claudeMdPath, content, 'utf-8');

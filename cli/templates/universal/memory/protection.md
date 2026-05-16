@@ -72,4 +72,4 @@
 
 ---
 
-*Σ₆ | Protection Registry | RIPER-for-All*
+*Σ₆ | Protection Registry | Riperflow*

@@ -135,4 +135,4 @@
 
 ---
 
-*Κ | Quality Gates | RIPER-for-All*
+*Κ | Quality Gates | Riperflow*

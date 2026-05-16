@@ -70,4 +70,4 @@
 
 ---
 
-*Σ₄ | Active Context | RIPER-for-All*
+*Σ₄ | Active Context | Riperflow*

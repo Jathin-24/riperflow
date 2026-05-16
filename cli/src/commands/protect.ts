@@ -18,7 +18,7 @@ export async function protectCommand(action?: string, target?: string, level?: s
   const config = await loadConfig();
   
   if (!config) {
-    console.log(chalk.red('❌ RIPER is not initialized. Run "riper-for-all init" first.'));
+    console.log(chalk.red('❌ RIPER is not initialized. Run "riperflow init" first.'));
     process.exit(1);
   }
 
@@ -76,11 +76,11 @@ function showProtectionStatus(protections: FileProtection[]): void {
   }
   
   console.log(chalk.bold('💡 Usage:\n'));
-  console.log(chalk.gray('  riper-for-all protect              # Show status'));
-  console.log(chalk.gray('  riper-for-all protect list        # List levels'));
-  console.log(chalk.gray('  riper-for-all protect set <path> <level> # Add protection'));
-  console.log(chalk.gray('  riper-for-all protect remove <path>    # Remove protection'));
-  console.log(chalk.gray('  riper-for-all protect check <path>    # Check protection\n'));
+  console.log(chalk.gray('  riperflow protect              # Show status'));
+  console.log(chalk.gray('  riperflow protect list        # List levels'));
+  console.log(chalk.gray('  riperflow protect set <path> <level> # Add protection'));
+  console.log(chalk.gray('  riperflow protect remove <path>    # Remove protection'));
+  console.log(chalk.gray('  riperflow protect check <path>    # Check protection\n'));
 }
 
 function listProtectionLevelsCmd(): void {
@@ -103,7 +103,7 @@ function listProtectionLevelsCmd(): void {
 async function setProtection(target: string | undefined, level: string, protections: FileProtection[], protectionFile: string): Promise<void> {
   if (!target) {
     console.log(chalk.red('❌ Please specify a path to protect.'));
-    console.log(chalk.gray('Usage: riper-for-all protect set <path> <level>\n'));
+    console.log(chalk.gray('Usage: riperflow protect set <path> <level>\n'));
     process.exit(1);
   }
 
@@ -146,7 +146,7 @@ async function setProtection(target: string | undefined, level: string, protecti
 async function removeProtection(target: string | undefined, protections: FileProtection[], protectionFile: string): Promise<void> {
   if (!target) {
     console.log(chalk.red('❌ Please specify a path to unprotect.'));
-    console.log(chalk.gray('Usage: riper-for-all protect remove <path>\n'));
+    console.log(chalk.gray('Usage: riperflow protect remove <path>\n'));
     process.exit(1);
   }
 

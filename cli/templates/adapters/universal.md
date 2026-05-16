@@ -1,4 +1,4 @@
-# RIPER-for-All - Universal Rules
+# Riperflow - Universal Rules
 *Version: 1.0 | Generated: {{DATE}}*
 
 ## Quick Reference
@@ -73,4 +73,4 @@
 State: `.riper/state.json` | Memory: 📂*.md | Backups: 📦*/
 
 ---
-*RIPER-for-All - Universal AI Development Framework*
+*Riperflow - Universal AI Development Framework*

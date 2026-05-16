@@ -20,7 +20,7 @@ export async function prdCommand(action?: string, prdArg?: string): Promise<void
   const config = await loadConfig();
   
   if (!config) {
-    console.log(chalk.red('❌ RIPER is not initialized. Run "riper-for-all init" first.'));
+    console.log(chalk.red('❌ RIPER is not initialized. Run "riperflow init" first.'));
     process.exit(1);
   }
 
@@ -82,7 +82,7 @@ async function listPRDs(prdDir: string): Promise<void> {
   
   if (prds.length === 0) {
     console.log(chalk.gray('  No PRDs found. Create one with:'));
-    console.log(chalk.gray('  riper-for-all prd create <title>\n'));
+    console.log(chalk.gray('  riperflow prd create <title>\n'));
     return;
   }
   
@@ -101,11 +101,11 @@ async function listPRDs(prdDir: string): Promise<void> {
   console.log('');
   
   console.log(chalk.bold('💡 Usage:\n'));
-  console.log(chalk.gray('  riper-for-all prd list           # List all PRDs'));
-  console.log(chalk.gray('  riper-for-all prd create <title> # Create new PRD'));
-  console.log(chalk.gray('  riper-for-all prd view <id>      # View PRD'));
-  console.log(chalk.gray('  riper-for-all prd approve <id>   # Approve PRD'));
-  console.log(chalk.gray('  riper-for-all prd deprecate <id> # Deprecate PRD\n'));
+  console.log(chalk.gray('  riperflow prd list           # List all PRDs'));
+  console.log(chalk.gray('  riperflow prd create <title> # Create new PRD'));
+  console.log(chalk.gray('  riperflow prd view <id>      # View PRD'));
+  console.log(chalk.gray('  riperflow prd approve <id>   # Approve PRD'));
+  console.log(chalk.gray('  riperflow prd deprecate <id> # Deprecate PRD\n'));
 }
 
 async function createPRD(prdDir: string, title?: string): Promise<void> {
@@ -178,7 +178,7 @@ Any technical considerations.
 async function viewPRD(prdDir: string, id?: string): Promise<void> {
   if (!id) {
     console.log(chalk.red('❌ Please specify a PRD ID.\n'));
-    console.log(chalk.gray('Usage: riper-for-all prd view <id>\n'));
+    console.log(chalk.gray('Usage: riperflow prd view <id>\n'));
     process.exit(1);
   }
   
@@ -214,7 +214,7 @@ async function viewPRD(prdDir: string, id?: string): Promise<void> {
 async function editPRD(prdDir: string, id?: string): Promise<void> {
   if (!id) {
     console.log(chalk.red('❌ Please specify a PRD ID.\n'));
-    console.log(chalk.gray('Usage: riper-for-all prd edit <id>\n'));
+    console.log(chalk.gray('Usage: riperflow prd edit <id>\n'));
     process.exit(1);
   }
 
@@ -254,7 +254,7 @@ async function editPRD(prdDir: string, id?: string): Promise<void> {
 async function updatePRDStatus(prdDir: string, id: string | undefined, status: string): Promise<void> {
   if (!id) {
     console.log(chalk.red('❌ Please specify a PRD ID.\n'));
-    console.log(chalk.gray(`Usage: riper-for-all prd ${status} <id>\n`));
+    console.log(chalk.gray(`Usage: riperflow prd ${status} <id>\n`));
     process.exit(1);
   }
 

@@ -56,4 +56,4 @@
 
 ---
 
-*Ω₄ | Execute Mode | RIPER-for-All v1.0*
+*Ω₄ | Execute Mode | Riperflow v1.0*

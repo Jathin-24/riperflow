@@ -59,4 +59,4 @@
 
 ---
 
-*Ω₃ | Plan Mode | RIPER-for-All v1.0*
+*Ω₃ | Plan Mode | Riperflow v1.0*

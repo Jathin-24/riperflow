@@ -1,4 +1,4 @@
-# RIPER-for-All - OpenAI Codex CLI Rules
+# Riperflow - OpenAI Codex CLI Rules
 *Version: 1.0 | Generated: {{DATE}}*
 
 ## SLASH COMMANDS (respond immediately)

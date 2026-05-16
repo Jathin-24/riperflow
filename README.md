@@ -1,10 +1,10 @@
-# RIPER-for-All
+# Riperflow
 
 Universal RIPER framework for AI coding tools - Works across Cursor, Claude Code, OpenCode and more.
 
 ## Overview
 
-RIPER-for-All brings the RIPER (Research, Innovate, Plan, Execute, Review) development methodology to every major AI coding tool. It creates a unified system that works across:
+Riperflow brings the RIPER (Research, Innovate, Plan, Execute, Review) development methodology to every major AI coding tool. It creates a unified system that works across:
 
 - Cursor IDE
 - Claude Code
@@ -66,10 +66,10 @@ RIPER-for-All brings the RIPER (Research, Innovate, Plan, Execute, Review) devel
 
 ```bash
 # Interactive (prompts you to pick tools):
-npx riper-for-all init
+npx riperflow init
 
 # Non-interactive (CI, Docker, scripted demos):
-npx riper-for-all init -y
+npx riperflow init -y
 ```
 
 `init` defaults to enabling Cursor, Claude Code, and OpenCode. Add more
@@ -101,17 +101,17 @@ The AI will automatically:
 
 ```bash
 # CLI commands
-npx riper-for-all init
-npx riper-for-all mode research
-npx riper-for-all sync                  # Regenerate per-tool rule files
-npx riper-for-all dashboard
-npx riper-for-all dashboard web --detach  # Background, then 'dashboard stop'
-npx riper-for-all update                # Check npm registry for newer version
+npx riperflow init
+npx riperflow mode research
+npx riperflow sync                  # Regenerate per-tool rule files
+npx riperflow dashboard
+npx riperflow dashboard web --detach  # Background, then 'dashboard stop'
+npx riperflow update                # Check npm registry for newer version
 ```
 
 ### Setup AI Tools
 ```bash
-npx riper-for-all setup --tools cursor,claude-code,opencode,kilocode
+npx riperflow setup --tools cursor,claude-code,opencode,kilocode
 ```
 
 ### Tool Rule Directories
@@ -131,54 +131,54 @@ npx riper-for-all setup --tools cursor,claude-code,opencode,kilocode
 
 ### MCP Services
 ```bash
-npx riper-for-all mcp add github
-npx riper-for-all mcp add websearch
-npx riper-for-all mcp generate
+npx riperflow mcp add github
+npx riperflow mcp add websearch
+npx riperflow mcp generate
 ```
 
 ### Dashboard
 ```bash
 # TUI Dashboard
-npx riper-for-all dashboard
+npx riperflow dashboard
 
 # Web Dashboard
-npx riper-for-all dashboard web --detach
+npx riperflow dashboard web --detach
 ```
 
 ### Analytics
 ```bash
-riper-for-all analytics                 # Summary (default 'stats')
-riper-for-all analytics stats           # JSONL-backed aggregates
-riper-for-all analytics weekly          # SQLite-backed weekly summary
-riper-for-all analytics export --format json --output events.json
-riper-for-all analytics export --format csv  # CSV to stdout
-riper-for-all analytics migrate         # Rebuild SQLite index from JSONL
+riperflow analytics                 # Summary (default 'stats')
+riperflow analytics stats           # JSONL-backed aggregates
+riperflow analytics weekly          # SQLite-backed weekly summary
+riperflow analytics export --format json --output events.json
+riperflow analytics export --format csv  # CSV to stdout
+riperflow analytics migrate         # Rebuild SQLite index from JSONL
 ```
 
 ### BMAD Commands
 ```bash
 # Roles
-riper-for-all role list
-riper-for-all role set architect
+riperflow role list
+riperflow role set architect
 
 # Quality Gates
-riper-for-all gate list
-riper-for-all gate advance
-riper-for-all gate approve design
+riperflow gate list
+riperflow gate advance
+riperflow gate approve design
 
 # PRD
-riper-for-all prd create "Feature Name"
-riper-for-all prd list
-riper-for-all prd approve <id>
+riperflow prd create "Feature Name"
+riperflow prd list
+riperflow prd approve <id>
 
 # Code Protection
-riper-for-all protect set src/auth locked
-riper-for-all protect check src/auth
+riperflow protect set src/auth locked
+riperflow protect check src/auth
 ```
 
 ## Token Optimization
 
-RIPER-for-All uses a hybrid symbolic notation system:
+Riperflow uses a hybrid symbolic notation system:
 - **Modes**: Ω₁-Ω₅ (Greek omega)
 - **Phases**: Π₁-Π₄ (Greek pi)
 - **Memory**: Σ₁-Σ₆ (Greek sigma)
@@ -192,7 +192,7 @@ fit; an equivalent prose ruleset typically runs an order of magnitude larger.
 
 ```
 ┌─────────────────────────────────────────┐
-│         RIPER-for-All CLI               │
+│             Riperflow CLI               │
 └──────────────────┬──────────────────────┘
                    │
     ┌──────────────┼──────────────┐

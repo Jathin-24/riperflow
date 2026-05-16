@@ -1,4 +1,4 @@
-# RIPER-for-All Σ
+# Riperflow Σ
 *2026 | v1.0*
 
 ## Ω₁=🔍R→ℙ(Ω₁)→Research

@@ -17,11 +17,11 @@ export async function restoreCommand(options: any): Promise<void> {
   const backupFile = options.backup;
   
   if (!backupFile) {
-    console.log(chalk.yellow('\n⚠️  Usage: riper-for-all restore -b <backup-file>'));
+    console.log(chalk.yellow('\n⚠️  Usage: riperflow restore -b <backup-file>'));
     console.log(chalk.gray('\nExamples:'));
-    console.log(chalk.gray('  riper-for-all restore -b state.json.2026-03-14T10-30-00.bak'));
-    console.log(chalk.gray('  riper-for-all restore -b progress.md.2026-03-14T10-30-00.bak'));
-    console.log(chalk.gray('\n💡 List backups: riper-for-all backup --list\n'));
+    console.log(chalk.gray('  riperflow restore -b state.json.2026-03-14T10-30-00.bak'));
+    console.log(chalk.gray('  riperflow restore -b progress.md.2026-03-14T10-30-00.bak'));
+    console.log(chalk.gray('\n💡 List backups: riperflow backup --list\n'));
     process.exit(1);
   }
 
@@ -46,7 +46,7 @@ export async function restoreCommand(options: any): Promise<void> {
 
   if (!(await fs.pathExists(backupPath))) {
     console.log(chalk.red(`❌ Backup not found: ${backupFile}`));
-    console.log(chalk.gray('\n💡 List backups: riper-for-all backup --list\n'));
+    console.log(chalk.gray('\n💡 List backups: riperflow backup --list\n'));
     process.exit(1);
   }
 

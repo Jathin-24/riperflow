@@ -41,7 +41,7 @@ export async function _doBackupCopy(filePath: string, silent: boolean = false): 
 /**
  * Public function: backs up `filePath` to the backups directory under an
  * exclusive lock on the source file so a concurrent writer cannot update it
- * mid-copy.  Stand-alone callers (e.g. the `riper-for-all backup` command)
+ * mid-copy.  Stand-alone callers (e.g. the `riperflow backup` command)
  * should use this.  saveConfig/saveState hold their own lock and call
  * _doBackupCopy directly.
  */
@@ -127,7 +127,7 @@ export async function backupCommand(options: any): Promise<void> {
         console.log(chalk.gray(`  - ${backup}`));
       }
     }
-    console.log(chalk.gray('\n💡 Tip: Use riper-for-all restore -b <backup-file> to restore\n'));
+    console.log(chalk.gray('\n💡 Tip: Use riperflow restore -b <backup-file> to restore\n'));
     return;
   }
 

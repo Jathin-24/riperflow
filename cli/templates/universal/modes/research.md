@@ -57,4 +57,4 @@
 
 ---
 
-*Ω₁ | Research Mode | RIPER-for-All v1.0*
+*Ω₁ | Research Mode | Riperflow v1.0*

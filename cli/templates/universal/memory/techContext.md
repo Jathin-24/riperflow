@@ -91,4 +91,4 @@
 
 ---
 
-*Σ₃ | Technical Context | RIPER-for-All*
+*Σ₃ | Technical Context | Riperflow*

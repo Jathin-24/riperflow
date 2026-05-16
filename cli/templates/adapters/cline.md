@@ -1,4 +1,4 @@
-# RIPER-for-All - Cline Rules
+# Riperflow - Cline Rules
 *Version: 1.0 | Generated: {{DATE}}*
 
 ## ⚠️ CRITICAL: YOU MUST ALWAYS ACKNOWLEDGE MODE SWITCHES

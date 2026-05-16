@@ -80,4 +80,4 @@
 
 ---
 
-*Σ₂ | System Patterns | RIPER-for-All*
+*Σ₂ | System Patterns | Riperflow*

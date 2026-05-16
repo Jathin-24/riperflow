@@ -1,4 +1,4 @@
-# RIPER-for-All - Product Requirements Document (PRD)
+# Riperflow - Product Requirements Document (PRD)
 
 **Version:** 1.0  
 **Status:** Draft  
@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary
 
-**RIPER-for-All** is a universal CLI framework that brings the RIPER (Research, Innovate, Plan, Execute, Review) development methodology to every major AI coding tool. Built on the foundation of CursorRIPER and RIPER.sigma, this project creates a unified system that works across Cursor IDE, Claude Code, OpenCode, and more—eliminating the need to configure separate rules for each tool.
+**Riperflow** is a universal CLI framework that brings the RIPER (Research, Innovate, Plan, Execute, Review) development methodology to every major AI coding tool. Built on the foundation of CursorRIPER and RIPER.sigma, this project creates a unified system that works across Cursor IDE, Claude Code, OpenCode, and more—eliminating the need to configure separate rules for each tool.
 
 The framework addresses critical gaps in AI-assisted development:
 - **Context Preservation**: Persistent memory across sessions and tools
@@ -184,33 +184,33 @@ This fragmentation creates three major problems:
 
 ```bash
 # Quick install
-npx riper-for-all init
+npx riperflow init
 
 # Or with specific tools
-npx riper-for-all setup --tools cursor,claude,opencode
+npx riperflow setup --tools cursor,claude,opencode
 ```
 
 ### 7.2 Daily Workflow
 
 ```bash
 # Switch modes
-npx riper-for-all mode research    # or /research
-npx riper-for-all mode plan        # or /plan
-npx riper-for-all mode execute     # or /execute
+npx riperflow mode research    # or /research
+npx riperflow mode plan        # or /plan
+npx riperflow mode execute     # or /execute
 
 # View dashboard
-npx riper-for-all dashboard        # TUI
-npx riper-for-all dashboard web    # Web
+npx riperflow dashboard        # TUI
+npx riperflow dashboard web    # Web
 ```
 
 ### 7.3 Safe Operations
 
 ```bash
 # Preview changes without applying
-npx riper-for-all sync --dry-run
+npx riperflow sync --dry-run
 
 # Force mode (CI/CD)
-npx riper-for-all setup --force
+npx riperflow setup --force
 ```
 
 ---
@@ -234,7 +234,7 @@ npx riper-for-all setup --force
 ### 8.2 Project Structure
 
 ```
-riper-for-all/
+riperflow/
 ├── cli/                    # Main CLI
 │   ├── src/
 │   │   ├── commands/       # CLI commands
@@ -268,7 +268,7 @@ riper-for-all/
 
 | Task | Deliverable |
 |------|-------------|
-| CLI structure | Working `npx riper-for-all init` |
+| CLI structure | Working `npx riperflow init` |
 | Core engine | Mode parsing, permission enforcement |
 | Memory management | CRUD for memory bank files |
 | Tool detection | Auto-detect installed tools |

@@ -1,4 +1,4 @@
-# RIPER-for-All — Comprehensive Fix & Optimization Plan
+# Riperflow — Comprehensive Fix & Optimization Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -8,7 +8,7 @@
 
 **Tech Stack:** Node.js 20+, TypeScript 5 (ES2022, strict), Commander.js, Vitest, `proper-lockfile`, `chokidar`, `express`, `inquirer`, `fs-extra`.
 
-**Repo state:** `/home/nitin/riper-for-everyone` is **not** currently a git repo. Phase 0 initializes it so the per-task `git commit` discipline below works. If you prefer to keep it un-versioned, drop the commit steps; everything else is identical.
+**Repo state:** `/home/nitin/riperflow` is **not** currently a git repo. Phase 0 initializes it so the per-task `git commit` discipline below works. If you prefer to keep it un-versioned, drop the commit steps; everything else is identical.
 
 **Audit reference:** All findings below cite `[#N]` numbers from the review. Re-read the audit output before each phase to keep context fresh.
 
@@ -23,12 +23,12 @@
 ### Task 0.1: Initialize git and baseline commit
 
 **Files:**
-- Create: `/home/nitin/riper-for-everyone/.gitignore`
+- Create: `/home/nitin/riperflow/.gitignore`
 
 - [ ] **Step 1: Initialize repo**
 
 ```bash
-cd /home/nitin/riper-for-everyone
+cd /home/nitin/riperflow
 git init
 git config --local user.email "$(git config --global user.email || echo 'dev@example.com')"
 git config --local user.name "$(git config --global user.name || echo 'dev')"
@@ -1027,7 +1027,7 @@ cd cli && npm run build && npm test -- --run && git tag phase-4-complete
 
 ---
 
-## Phase 5 — Implement `riper-for-all sync`
+## Phase 5 — Implement `riperflow sync`
 
 **Why next:** Sync is the marketed P0 feature. With adapters fixed, locking in place, and enforcement wired, sync is just "regenerate per-tool rule files from the canonical memory bank, plus pull tool-side memory edits back into `memory-bank/`".
 
@@ -1319,7 +1319,7 @@ it('JSONL and SQLite stay consistent after 1000 appends', async () => {
 
 - [ ] **Step 2: Implement** the optional SQLite path. If `better-sqlite3` import fails (it's now an optional dep), log a one-time warning and continue with JSONL only.
 
-- [ ] **Step 3:** Add `riper-for-all analytics migrate` to rebuild the DB from JSONL.
+- [ ] **Step 3:** Add `riperflow analytics migrate` to rebuild the DB from JSONL.
 
 - [ ] **Step 4: Build, test, commit.**
 
@@ -1467,17 +1467,17 @@ git commit -m "fix(mcp): default to npx invocation; --global opt-in"
 **Files:**
 - Modify: `cli/src/commands/update.ts`
 
-- [ ] **Decide:** implement a real check (`npm view riper-for-all version` + compare to `package.json.version`) or remove the command and the README mention.
+- [ ] **Decide:** implement a real check (`npm view riperflow version` + compare to `package.json.version`) or remove the command and the README mention.
 
 - [ ] **Implement (recommended):**
 
 ```ts
-const { stdout } = await execAsync('npm view riper-for-all version');
+const { stdout } = await execAsync('npm view riperflow version');
 const latest = stdout.trim();
 const current = require('../../package.json').version;
 if (semver.gt(latest, current)) {
   console.log(`Update available: ${current} → ${latest}`);
-  console.log(`Run: npm install -g riper-for-all@${latest}`);
+  console.log(`Run: npm install -g riperflow@${latest}`);
 } else {
   console.log(`You are running the latest version (${current}).`);
 }
@@ -1555,7 +1555,7 @@ it('truncates memory file beyond maxSize, archives the tail', async () => {
 
 - [ ] **Step 2: Implement** — for each `MEMORY_FILES[key]`, if file size > `maxSize`, append the overflow to `.riper/archive/<key>.md` and rewrite the source with the trimmed head + a "(archived earlier sections in .riper/archive/<key>.md)" trailer.
 
-- [ ] **Step 3:** Run truncation at the end of `sync()` and as its own `riper-for-all memory truncate` command.
+- [ ] **Step 3:** Run truncation at the end of `sync()` and as its own `riperflow memory truncate` command.
 
 - [ ] **Step 4: Build, test, commit.**
 

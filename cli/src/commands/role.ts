@@ -9,7 +9,7 @@ export async function roleCommand(action?: string, roleArg?: string): Promise<vo
   const config = await loadConfig();
   
   if (!config) {
-    console.log(chalk.red('❌ RIPER is not initialized. Run "riper-for-all init" first.'));
+    console.log(chalk.red('❌ RIPER is not initialized. Run "riperflow init" first.'));
     process.exit(1);
   }
 
@@ -31,7 +31,7 @@ export async function roleCommand(action?: string, roleArg?: string): Promise<vo
     case 'switch':
       if (!roleArg) {
         console.log(chalk.red('❌ Please specify a role.'));
-        console.log(chalk.gray('Usage: riper-for-all role set <role>\n'));
+        console.log(chalk.gray('Usage: riperflow role set <role>\n'));
         process.exit(1);
       }
       await switchRole(roleArg, currentRole, state);
@@ -65,11 +65,11 @@ function showRoleStatus(currentRole: string): void {
   }
   
   console.log(chalk.bold('💡 Usage:\n'));
-  console.log(chalk.gray('  riper-for-all role              # Show current role'));
-  console.log(chalk.gray('  riper-for-all role list        # List all roles'));
-  console.log(chalk.gray('  riper-for-all role set <role>  # Switch role'));
-  console.log(chalk.gray('  riper-for-all role info        # Role details'));
-  console.log(chalk.gray('  riper-for-all role permissions # Show permissions\n'));
+  console.log(chalk.gray('  riperflow role              # Show current role'));
+  console.log(chalk.gray('  riperflow role list        # List all roles'));
+  console.log(chalk.gray('  riperflow role set <role>  # Switch role'));
+  console.log(chalk.gray('  riperflow role info        # Role details'));
+  console.log(chalk.gray('  riperflow role permissions # Show permissions\n'));
 }
 
 function listAllRoles(currentRole: string): void {

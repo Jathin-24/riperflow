@@ -8,7 +8,7 @@ export async function gateCommand(action?: string, gateArg?: string): Promise<vo
   const config = await loadConfig();
   
   if (!config) {
-    console.log(chalk.red('❌ RIPER is not initialized. Run "riper-for-all init" first.'));
+    console.log(chalk.red('❌ RIPER is not initialized. Run "riperflow init" first.'));
     process.exit(1);
   }
 
@@ -79,11 +79,11 @@ function showGateStatus(gateStatuses: GateStatuses): void {
   }
   
   console.log(chalk.bold('\n💡 Usage:\n'));
-  console.log(chalk.gray('  riper-for-all gate             # Show status'));
-  console.log(chalk.gray('  riper-for-all gate list       # List all gates'));
-  console.log(chalk.gray('  riper-for-all gate advance    # Move to next gate'));
-  console.log(chalk.gray('  riper-for-all gate approve <gate> # Approve a gate'));
-  console.log(chalk.gray('  riper-for-all gate reset      # Reset all gates\n'));
+  console.log(chalk.gray('  riperflow gate             # Show status'));
+  console.log(chalk.gray('  riperflow gate list       # List all gates'));
+  console.log(chalk.gray('  riperflow gate advance    # Move to next gate'));
+  console.log(chalk.gray('  riperflow gate approve <gate> # Approve a gate'));
+  console.log(chalk.gray('  riperflow gate reset      # Reset all gates\n'));
 }
 
 function listAllGates(gateStatuses: GateStatuses): void {
@@ -159,7 +159,7 @@ async function advanceGate(gateStatuses: GateStatuses, state: RuntimeState | nul
 async function approveGate(gateId: string | undefined, gateStatuses: GateStatuses, state: RuntimeState | null): Promise<void> {
   if (!gateId) {
     console.log(chalk.red('❌ Please specify a gate to approve.'));
-    console.log(chalk.gray('Usage: riper-for-all gate approve <gate>\n'));
+    console.log(chalk.gray('Usage: riperflow gate approve <gate>\n'));
     process.exit(1);
   }
 
@@ -183,12 +183,12 @@ async function approveGate(gateId: string | undefined, gateStatuses: GateStatuse
   // Authorize the current role
   const role = state?.currentRole ?? 'dev';
   if (!state?.currentRole) {
-    console.log(chalk.yellow(`\n⚠ No role configured in state — defaulting to 'dev'. Run "riper-for-all role <name>" to set a role.\n`));
+    console.log(chalk.yellow(`\n⚠ No role configured in state — defaulting to 'dev'. Run "riperflow role <name>" to set a role.\n`));
   }
   if (!canApproveGate(gateId as GateStage, role)) {
     console.log(chalk.red(`\n❌ Role '${role}' is not authorized to approve ${gate.emoji} ${gate.name}.\n`));
     console.log(chalk.gray(`💡 Required approvals: ${gate.requiredApprovals.join(', ')}\n`));
-    console.log(chalk.gray(`   Switch to a required role: riper-for-all role <name>\n`));
+    console.log(chalk.gray(`   Switch to a required role: riperflow role <name>\n`));
     process.exit(1);
   }
 

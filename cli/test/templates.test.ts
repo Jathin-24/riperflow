@@ -28,7 +28,7 @@ describe('adapter templates', () => {
       expect(fs.existsSync(p), `missing ${p}`).toBe(true);
       const body = fs.readFileSync(p, 'utf-8');
       expect(body.length, file).toBeGreaterThan(100);
-      expect(body).toMatch(/RIPER/);
+      expect(body).toMatch(/Riperflow|RIPER/i);
     });
   }
 
@@ -38,7 +38,7 @@ describe('adapter templates', () => {
     for (const tool of ['cursor', 'claude-code', 'opencode', 'kilocode', 'vscode', 'roo', 'aider', 'windsurf', 'cline', 'codex']) {
       const out = generateToolRules(tool, { currentMode: 'execute', currentRole: 'dev', currentGate: 'design' });
       expect(out.length, tool).toBeGreaterThan(100);
-      expect(out, tool).toMatch(/RIPER/);
+      expect(out, tool).toMatch(/Riperflow|RIPER/i);
     }
   });
 });

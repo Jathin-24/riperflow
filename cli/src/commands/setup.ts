@@ -13,7 +13,7 @@ export async function setupCommand(options: SetupOptions): Promise<void> {
   const config = await loadConfig();
   
   if (!config) {
-    console.log(chalk.red('❌ RIPER is not initialized. Run "riper-for-all init" first.'));
+    console.log(chalk.red('❌ RIPER is not initialized. Run "riperflow init" first.'));
     process.exit(1);
   }
 

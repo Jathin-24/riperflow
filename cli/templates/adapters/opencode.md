@@ -1,4 +1,4 @@
-# RIPER-for-All - OpenCode Agent Rules
+# Riperflow - OpenCode Agent Rules
 *Version: 1.0*
 
 ## SLASH COMMANDS (respond immediately)

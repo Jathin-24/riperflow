@@ -39,7 +39,7 @@ export class WindsurfAdapter extends BaseAdapter {
    * Windsurf uses cascade.md for global instructions
    */
   getCascadeContent(): string {
-    return `# RIPER-for-All - Windsurf Cascade Instructions
+    return `# Riperflow - Windsurf Cascade Instructions
 
 ${this.getRulesContent()}
 

@@ -57,7 +57,7 @@ export async function configCommand(action?: string, keyArg?: string, valueArg?:
     case 'set': {
       if (!keyArg || valueArg === undefined) {
         console.log(chalk.red('❌ Please specify key and value.'));
-        console.log(chalk.gray('Usage: riper-for-all config set <key> <value>\n'));
+        console.log(chalk.gray('Usage: riperflow config set <key> <value>\n'));
         process.exit(1);
       }
 

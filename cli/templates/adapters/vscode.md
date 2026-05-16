@@ -1,4 +1,4 @@
-# RIPER-for-All - VS Code Rules
+# Riperflow - VS Code Rules
 *Version: 1.0*
 
 ## SLASH COMMANDS (respond immediately)

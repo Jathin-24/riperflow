@@ -1,4 +1,4 @@
-# RIPER-for-All - KiloCode Rules
+# Riperflow - KiloCode Rules
 *Version: 1.0*
 
 ## ⚠️ CRITICAL: YOU MUST ALWAYS ACKNOWLEDGE MODE SWITCHES

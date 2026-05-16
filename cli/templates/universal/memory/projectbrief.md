@@ -74,4 +74,4 @@
 
 ---
 
-*Σ₁ | Project Brief | RIPER-for-All*
+*Σ₁ | Project Brief | Riperflow*

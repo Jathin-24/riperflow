@@ -1,4 +1,4 @@
-# RIPER-for-All — Pre-Promotion Test Report
+# Riperflow — Pre-Promotion Test Report
 
 **Tester:** Claude (promotion-grade dogfood, option 3)
 **Date:** 2026-05-16
@@ -37,16 +37,16 @@ The only thing left between the repo and a Show HN launch is **`npm publish`** (
 ### P0 — Launch blockers
 
 #### Bug 1 — Package not published to npm
-- `npm view riper-for-all version` → **404 Not Found**.
-- Every README install line is `npx riper-for-all init`. Today, that 404s for every visitor.
+- `npm view riperflow version` → **404 Not Found**.
+- Every README install line is `npx riperflow init`. Today, that 404s for every visitor.
 - **Fix:** `npm publish` from `cli/`. (Make sure `bin/` is in `files`, and that `prepare` script publishes built `dist/`.)
 
 #### Bug 2 — `dist/index.js` ships without executable bit
-- `stat` shows `-rw-rw-r--` on the bin entry. After `npm link`, running `riper-for-all` returns `permission denied`.
+- `stat` shows `-rw-rw-r--` on the bin entry. After `npm link`, running `riperflow` returns `permission denied`.
 - npm install from registry chmods automatically, so end-users *might* not hit it — but it breaks `npm link`, local dev, and any tarball install. Demo-time risk.
 - **Fix:** in `cli/package.json` `scripts.build`, append `&& chmod +x dist/index.js`.
 
-#### Bug 3 — `riper-for-all init` crashes when stdin is not a TTY
+#### Bug 3 — `riperflow init` crashes when stdin is not a TTY
 - Pipe / CI / Docker / scripted demo recording → `Error [ERR_USE_AFTER_CLOSE]: readline was closed`. Zero files created.
 - Inquirer is invoked unconditionally; the `-y / --yes` flag exists but is **not documented** in the README.
 - **Fix:** detect non-TTY in `commands/init.ts`, fall back to `--yes` defaults; document `-y` in README.
@@ -90,14 +90,14 @@ TypeError: fs.readFile is not a function
 - Reality: `.opencode/AGENTS.md + .opencode/opencode.json`
 - **Fix:** update the table in README.md line 114.
 
-#### Bug 9 — `riper-for-all sync` logs `.opencode/AGENTS.md` twice
+#### Bug 9 — `riperflow sync` logs `.opencode/AGENTS.md` twice
 - Sync output prints the same line twice in a row. Either a double-write or double-log.
 - Cosmetic, but creates "is this thing broken?" doubt during a recording.
 - **Fix:** trace `sync` in `commands/sync.ts` — likely two adapters writing the same file.
 
 #### Bug 10 — `update` command misreports "offline" when package is unpublished
 - Output: `⚠ Could not reach the npm registry (offline or network error).`
-- Actual cause: `npm view riper-for-all` returns 404 (Bug 1). Misleading message blames the user's network.
+- Actual cause: `npm view riperflow` returns 404 (Bug 1). Misleading message blames the user's network.
 - **Fix:** distinguish 404 from network error in `commands/update.ts`.
 
 ### P2 — Polish
@@ -151,7 +151,7 @@ TypeError: fs.readFile is not a function
 
 ## What is broken (do not demo)
 
-- `npx riper-for-all init` (Bug 1: 404 from npm)
+- `npx riperflow init` (Bug 1: 404 from npm)
 - `mcp add ... && mcp generate` (Bug 4: every tool fails)
 - `analytics migrate` (Bug 5: TypeError)
 - `update` (Bug 10: misleading message)
@@ -185,26 +185,26 @@ TypeError: fs.readFile is not a function
 
 When you're ready: from `cli/`,
 1. `npm publish --access public`
-2. `npx riper-for-all@latest init` in a *fresh* tmpdir to verify the registry-installed copy works exactly like the local build did today.
+2. `npx riperflow@latest init` in a *fresh* tmpdir to verify the registry-installed copy works exactly like the local build did today.
 3. Then return to the original promotion plan — the **#4 demo video + #1 Show HN** sprint is now safe to execute.
 
 ## Marketing assets — captured today
 
 Already-clean terminal outputs that can become tweet/screenshot fodder once the above is fixed:
 
-- `riper-for-all init --yes` end-state: 6 memory bank files + config. Clean ✓ output.
-- `riper-for-all setup --tools cursor,claude-code,opencode,kilocode,vscode,roo,aider,windsurf,cline,codex` → "Successful: 10". This is the **money screenshot** for the "works across 10 AI coding tools" hero claim.
-- `riper-for-all status` output is well-designed and self-explanatory.
-- `riper-for-all gate list` and `role list` outputs render cleanly.
+- `riperflow init --yes` end-state: 6 memory bank files + config. Clean ✓ output.
+- `riperflow setup --tools cursor,claude-code,opencode,kilocode,vscode,roo,aider,windsurf,cline,codex` → "Successful: 10". This is the **money screenshot** for the "works across 10 AI coding tools" hero claim.
+- `riperflow status` output is well-designed and self-explanatory.
+- `riperflow gate list` and `role list` outputs render cleanly.
 - Generated `CLAUDE.md` token count: **1,355 tokens** — quotable.
 
 **Recommended demo video shot list** (60 seconds, after fixes land):
 1. (5s) Title card: "One workflow. Ten AI tools. 1.5k tokens."
-2. (10s) `mkdir demo && cd demo && npx riper-for-all init` → memory bank appears.
-3. (10s) `npx riper-for-all setup --tools cursor,claude-code,opencode,kilocode,vscode,roo,aider,windsurf,cline,codex` → ✓×10 summary.
+2. (10s) `mkdir demo && cd demo && npx riperflow init` → memory bank appears.
+3. (10s) `npx riperflow setup --tools cursor,claude-code,opencode,kilocode,vscode,roo,aider,windsurf,cline,codex` → ✓×10 summary.
 4. (10s) `tree -L 2` → show the 10 tool dirs side-by-side.
-5. (10s) `riper-for-all p` → mode switches to Plan, then `e` → Execute. Status updates.
+5. (10s) `riperflow p` → mode switches to Plan, then `e` → Execute. Status updates.
 6. (10s) Open dashboard in browser → mode/analytics tiles. Switch mode in another terminal → tile updates.
-7. (5s) End card: "github.com/.../riper-for-all · MIT".
+7. (5s) End card: "github.com/.../riperflow · MIT".
 
 Step 6 needs the WS/realtime claim resolved first; otherwise drop it for "Open dashboard, see analytics."

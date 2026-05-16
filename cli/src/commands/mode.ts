@@ -8,7 +8,7 @@ export async function modeCommand(modeArg?: string): Promise<void> {
   const config = await loadConfig();
   
   if (!config) {
-    console.log(chalk.red('❌ RIPER is not initialized. Run "riper-for-all init" first.'));
+    console.log(chalk.red('❌ RIPER is not initialized. Run "riperflow init" first.'));
     process.exit(1);
   }
 
@@ -31,12 +31,12 @@ export async function modeCommand(modeArg?: string): Promise<void> {
     }
     
     console.log(chalk.bold('\n💡 Usage:\n'));
-    console.log(chalk.gray('  riper-for-all mode research    # or /research'));
-    console.log(chalk.gray('  riper-for-all mode innovate   # or /innovate'));
-    console.log(chalk.gray('  riper-for-all mode plan       # or /plan'));
-    console.log(chalk.gray('  riper-for-all mode execute    # or /execute'));
-    console.log(chalk.gray('  riper-for-all mode review     # or /review'));
-    console.log(chalk.gray('  riper-for-all mode            # show current status\n'));
+    console.log(chalk.gray('  riperflow mode research    # or /research'));
+    console.log(chalk.gray('  riperflow mode innovate   # or /innovate'));
+    console.log(chalk.gray('  riperflow mode plan       # or /plan'));
+    console.log(chalk.gray('  riperflow mode execute    # or /execute'));
+    console.log(chalk.gray('  riperflow mode review     # or /review'));
+    console.log(chalk.gray('  riperflow mode            # show current status\n'));
     
     return;
   }

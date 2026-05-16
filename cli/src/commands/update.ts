@@ -8,7 +8,7 @@ import { promises as fs } from 'node:fs';
 const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const PKG_NAME = 'riper-for-all';
+const PKG_NAME = 'riperflow';
 
 interface UpdateOptions {
   adaptersOnly?: boolean;

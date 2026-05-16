@@ -25,7 +25,7 @@ export async function dashboardCommand(type?: string, options?: DashboardOptions
   const config = await loadConfig();
 
   if (!config) {
-    console.log(chalk.red('❌ RIPER is not initialized. Run "riper-for-all init" first.'));
+    console.log(chalk.red('❌ RIPER is not initialized. Run "riperflow init" first.'));
     process.exit(1);
   }
 
@@ -63,7 +63,7 @@ export async function dashboardCommand(type?: string, options?: DashboardOptions
       await fs.writeFile(pidfile, String(child.pid), 'utf-8');
 
       console.log(chalk.green(`\n🌐 Dashboard started in background (pid ${child.pid}) at http://localhost:${portNum}\n`));
-      console.log(chalk.gray(`   Stop with: riper-for-all dashboard stop\n`));
+      console.log(chalk.gray(`   Stop with: riperflow dashboard stop\n`));
       return;
     }
 
@@ -118,7 +118,7 @@ async function showTUIDashboard(): Promise<void> {
   const storage = getAnalyticsStorage(config?.projectPath);
 
   if (!config || !state) {
-    console.log(chalk.red('❌ RIPER is not initialized. Run "riper-for-all init" first.'));
+    console.log(chalk.red('❌ RIPER is not initialized. Run "riperflow init" first.'));
     process.exit(1);
   }
 
@@ -127,7 +127,7 @@ async function showTUIDashboard(): Promise<void> {
 
   console.clear();
   console.log(chalk.cyan.bold('╔══════════════════════════════════════════════════════════╗'));
-  console.log(chalk.cyan.bold('║            RIPER-for-All Dashboard                      ║'));
+  console.log(chalk.cyan.bold('║            Riperflow Dashboard                      ║'));
   console.log(chalk.cyan.bold('╚══════════════════════════════════════════════════════════╝'));
 
   console.log(chalk.bold('\n📍 Current State\n'));

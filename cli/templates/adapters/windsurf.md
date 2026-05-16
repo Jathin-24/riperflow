@@ -1,4 +1,4 @@
-# RIPER-for-All - Windsurf Rules
+# Riperflow - Windsurf Rules
 *Version: 1.0 | Generated: {{DATE}}*
 
 ## SLASH COMMANDS (respond immediately)

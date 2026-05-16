@@ -46,7 +46,7 @@ export class CursorAdapter extends BaseAdapter {
     });
 
     return `---
-description: RIPER-for-All Framework Rules
+description: Riperflow Framework Rules
 globs: **/*
 alwaysApply: true
 ---
@@ -85,7 +85,7 @@ Before ANY file modification in Cursor:
 - Maintain mode context across conversation
 
 ---
-*Generated for Cursor IDE | RIPER-for-All v1.0*
+*Generated for Cursor IDE | Riperflow v1.0*
 `;
   }
 

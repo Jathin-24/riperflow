@@ -1,4 +1,4 @@
-# RIPER-for-All - Comprehensive Architecture Document
+# Riperflow - Comprehensive Architecture Document
 
 **Version:** 1.0.0  
 **Status:** Draft  
@@ -32,7 +32,7 @@
 
 ## 1. Executive Summary
 
-**RIPER-for-All** is a universal framework that brings the RIPER (Research, Innovate, Plan, Execute, Review) methodology to every major AI coding tool. Built on the foundation of CursorRIPER and RIPER.sigma, this project creates a unified system that works across Cursor IDE, Claude Code, OpenCode, KiloCode, VS Code, and more.
+**Riperflow** is a universal framework that brings the RIPER (Research, Innovate, Plan, Execute, Review) methodology to every major AI coding tool. Built on the foundation of CursorRIPER and RIPER.sigma, this project creates a unified system that works across Cursor IDE, Claude Code, OpenCode, KiloCode, VS Code, and more.
 
 The framework provides:
 - **Universal compatibility** across all major AI coding tools
@@ -45,18 +45,18 @@ The framework provides:
 
 ## 2. Project Overview
 
-### 2.1 What is RIPER-for-All?
+### 2.1 What is Riperflow?
 
-RIPER-for-All is a CLI tool that installs and manages the RIPER development methodology across multiple AI coding environments. It serves as a universal adapter that translates the same core rules and workflows into each tool's specific format.
+Riperflow is a CLI tool that installs and manages the RIPER development methodology across multiple AI coding environments. It serves as a universal adapter that translates the same core rules and workflows into each tool's specific format.
 
-### 2.2 Why RIPER-for-All?
+### 2.2 Why Riperflow?
 
 Current AI coding tools each have their own rule system:
 - Cursor uses `.mdc` files in `.cursor/rules/`
 - Claude Code uses `CLAUDE.md` in project root + `.claude/rules/`
 - OpenCode uses `AGENTS.md` in project root + `opencode.json` config
 
-RIPER-for-All creates a **universal layer** that:
+Riperflow creates a **universal layer** that:
 1. Provides a single source of truth for your development workflow
 2. Automatically adapts to whatever tool you're using
 3. Syncs memory and state across all tools
@@ -96,7 +96,7 @@ RIPER-for-All creates a **universal layer** that:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                           RIPER-for-All CLI                              │
+│                           Riperflow CLI                              │
 │                    (Universal Development Framework)                     │
 └─────────────────────────────────────────────────────────────────────────┘
                                       │
@@ -192,7 +192,7 @@ User Command (e.g., /research)
 ## 6. Directory Structure
 
 ```
-riper-for-all/
+riperflow/
 ├── cli/                           # Main CLI application
 │   ├── src/
 │   │   ├── index.ts              # Entry point
@@ -554,95 +554,95 @@ Each tool is detected by:
 
 ```bash
 # Initialize RIPER in current project
-npx riper-for-all init
+npx riperflow init
 
 # Setup for specific tools
-npx riper-for-all setup --tools cursor,claude,opencode
+npx riperflow setup --tools cursor,claude,opencode
 
 # Switch mode
-npx riper-for-all mode research     # or: /research
-npx riper-for-all mode innovate     # or: /innovate
-npx riper-for-all mode plan         # or: /plan
-npx riper-for-all mode execute      # or: /execute
-npx riper-for-all mode review       # or: /review
+npx riperflow mode research     # or: /research
+npx riperflow mode innovate     # or: /innovate
+npx riperflow mode plan         # or: /plan
+npx riperflow mode execute      # or: /execute
+npx riperflow mode review       # or: /review
 
 # Check current mode
-npx riper-for-all mode              # shows current mode
+npx riperflow mode              # shows current mode
 ```
 
 ### 10.2 Memory Commands
 
 ```bash
 # Sync memory across all tools
-npx riper-for-all sync
+npx riperflow sync
 
 # Backup memory
-npx riper-for-all backup
+npx riperflow backup
 
 # Restore from backup
-npx riper-for-all restore --backup <name>
+npx riperflow restore --backup <name>
 
 # List backups
-npx riper-for-all backup list
+npx riperflow backup list
 
 # Migrate from existing RIPER
-npx riper-for-all migrate --source <path>
+npx riperflow migrate --source <path>
 ```
 
 ### 10.3 MCP Commands
 
 ```bash
 # Add MCP service
-npx riper-for-all mcp add github
-npx riper-for-all mcp add websearch
-npx riper-for-all mcp add browser
-npx riper-for-all mcp add docker
+npx riperflow mcp add github
+npx riperflow mcp add websearch
+npx riperflow mcp add browser
+npx riperflow mcp add docker
 
 # List MCP services
-npx riper-for-all mcp list
+npx riperflow mcp list
 
 # Remove MCP service
-npx riper-for-all mcp remove <name>
+npx riperflow mcp remove <name>
 
 # Configure MCP
-npx riper-for-all mcp config <name>
+npx riperflow mcp config <name>
 ```
 
 ### 10.4 Dashboard Commands
 
 ```bash
 # Start TUI dashboard
-npx riper-for-all dashboard
+npx riperflow dashboard
 
 # Start web dashboard (interactive mode)
-npx riper-for-all dashboard web
+npx riperflow dashboard web
 
 # Start web dashboard (detached mode)
-npx riper-for-all dashboard web --detach
+npx riperflow dashboard web --detach
 
 # Stop detached dashboard
-npx riper-for-all dashboard stop
+npx riperflow dashboard stop
 ```
 
 ### 10.5 Utility Commands
 
 ```bash
 # Check status
-npx riper-for-all status
+npx riperflow status
 
 # Update framework
-npx riper-for-all update
+npx riperflow update
 
 # Show analytics
-npx riper-for-all analytics
+npx riperflow analytics
 
 # Export analytics
-npx riper-for-all analytics export --format json
+npx riperflow analytics export --format json
 
 # Configuration
-npx riper-for-all config set <key> <value>
-npx riper-for-all config get <key>
-npx riper-for-all config reset
+npx riperflow config set <key> <value>
+npx riperflow config get <key>
+npx riperflow config reset
 ```
 
 ### 10.6 Dry-Run and Safe File Operations
@@ -651,13 +651,13 @@ All file-modifying commands support `--dry-run` to preview changes without apply
 
 ```bash
 # Dry run - shows what would happen
-npx riper-for-all setup --tools cursor --dry-run
+npx riperflow setup --tools cursor --dry-run
 
 # View diff before applying
-npx riper-for-all sync --dry-run
+npx riperflow sync --dry-run
 
 # Force mode - skip prompts (for CI/CD)
-npx riper-for-all setup --tools cursor --force
+npx riperflow setup --tools cursor --force
 ```
 
 **Safe File Merging Strategy:**
@@ -686,7 +686,7 @@ View diff? [y/N]
 
 **Purpose:** Quick stats and status in terminal
 
-**Launch:** `npx riper-for-all dashboard`
+**Launch:** `npx riperflow dashboard`
 
 **Features:**
 - Current mode and phase
@@ -699,7 +699,7 @@ View diff? [y/N]
 
 **Purpose:** Full visualization and management
 
-**Launch:** `npx riper-for-all dashboard web --detach`
+**Launch:** `npx riperflow dashboard web --detach`
 
 **Features:**
 - Mode visualization with workflow diagram
@@ -904,7 +904,7 @@ To prevent memory file growth from breaking token budgets, implement tiered load
 ### 14.1 Initialization Flow
 
 ```
-npx riper-for-all init
+npx riperflow init
         │
         ▼
 ┌───────────────────┐
@@ -945,7 +945,7 @@ npx riper-for-all init
 ### 14.2 Mode Switching Flow
 
 ```
-User types: /research (or npx riper-for-all mode research)
+User types: /research (or npx riperflow mode research)
         │
         ▼
 ┌───────────────────┐
@@ -996,7 +996,7 @@ User types: /research (or npx riper-for-all mode research)
 
 ### 15.1 Configuration (JSON)
 
-**Location:** `.riper/config.json` (project) or `~/.config/riper-for-all/config.json` (global)
+**Location:** `.riper/config.json` (project) or `~/.config/riperflow/config.json` (global)
 
 ```json
 {
@@ -1204,7 +1204,7 @@ For robust file locking and concurrency handling, a future version may include a
 
 ```
 ┌─────────────────────────────────────────┐
-│         RIPER-for-All Daemon           │
+│         Riperflow Daemon           │
 │                                         │
 │  • File lock management                 │
 │  • Real-time sync across tools          │
@@ -1329,7 +1329,7 @@ async function safeWrite(file: string, content: string) {
 **Command:**
 ```bash
 # Update adapters without core
-npx riper-for-all update-adapters
+npx riperflow update-adapters
 ```
 
 ### 18.5 MCP Lifecycle Management

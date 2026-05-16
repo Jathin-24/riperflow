@@ -25,7 +25,7 @@ import { trackCommand } from './analytics/events.js';
 const program = new Command();
 
 program
-  .name('riper-for-all')
+  .name('riperflow')
   .description('Universal RIPER framework for AI coding tools')
   .version('1.0.0');
 
@@ -203,7 +203,7 @@ program
 // Handle unknown commands
 program.on('command:*', () => {
   console.error(chalk.red(`\nInvalid command: ${program.args.join(' ')}`));
-  console.log(chalk.gray(`Run 'riper-for-all --help' for available commands\n`));
+  console.log(chalk.gray(`Run 'riperflow --help' for available commands\n`));
   process.exit(1);
 });
 

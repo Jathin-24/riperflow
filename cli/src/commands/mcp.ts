@@ -16,15 +16,15 @@ export async function mcpCommand(action?: string, service?: string, options?: { 
 
   if (!action) {
     console.log(chalk.bold('\n🔌 MCP Services\n'));
-    console.log(chalk.gray('Usage: riper-for-all mcp <action> [service]'));
-    console.log(chalk.gray('  riper-for-all mcp list'));
-    console.log(chalk.gray('  riper-for-all mcp available'));
-    console.log(chalk.gray('  riper-for-all mcp status'));
-    console.log(chalk.gray('  riper-for-all mcp add github'));
-    console.log(chalk.gray('  riper-for-all mcp install github'));
-    console.log(chalk.gray('  riper-for-all mcp setup github'));
-    console.log(chalk.gray('  riper-for-all mcp generate'));
-    console.log(chalk.gray('  riper-for-all mcp remove github\n'));
+    console.log(chalk.gray('Usage: riperflow mcp <action> [service]'));
+    console.log(chalk.gray('  riperflow mcp list'));
+    console.log(chalk.gray('  riperflow mcp available'));
+    console.log(chalk.gray('  riperflow mcp status'));
+    console.log(chalk.gray('  riperflow mcp add github'));
+    console.log(chalk.gray('  riperflow mcp install github'));
+    console.log(chalk.gray('  riperflow mcp setup github'));
+    console.log(chalk.gray('  riperflow mcp generate'));
+    console.log(chalk.gray('  riperflow mcp remove github\n'));
     return;
   }
 
