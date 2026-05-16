@@ -42,7 +42,9 @@ RIPER-for-All brings the RIPER (Research, Innovate, Plan, Execute, Review) devel
 
 ### Dashboard
 - **TUI Dashboard** - Terminal-based stats
-- **Web Dashboard** - Browser interface with real-time updates
+- **Web Dashboard** - Browser interface with real-time updates via WebSocket;
+  bound to `127.0.0.1` only and protected by a per-project bearer token
+  (`.riper/dashboard.token`, mode 0600)
 
 ### Advanced Analytics
 - **SQLite Database** - High-performance analytics storage with JSONL fallback
@@ -63,8 +65,15 @@ RIPER-for-All brings the RIPER (Research, Innovate, Plan, Execute, Review) devel
 ## Installation
 
 ```bash
+# Interactive (prompts you to pick tools):
 npx riper-for-all init
+
+# Non-interactive (CI, Docker, scripted demos):
+npx riper-for-all init -y
 ```
+
+`init` defaults to enabling Cursor, Claude Code, and OpenCode. Add more
+later with `setup --tools cline,codex,...` (full list below).
 
 ## Usage
 
@@ -111,7 +120,7 @@ npx riper-for-all setup --tools cursor,claude-code,opencode,kilocode
 |------|----------------|
 | Claude Code | (project root) `CLAUDE.md` + `.claude/rules/` |
 | Cursor | `.cursor/rules/` |
-| OpenCode | (project root) `AGENTS.md` + `opencode.json` |
+| OpenCode | `.opencode/AGENTS.md` + `.opencode/opencode.json` |
 | KiloCode | `.kilocode/rules/` |
 | VS Code | `.vscode/.riper.md` |
 | Roo Code | `.roo/rules/` |
@@ -175,7 +184,9 @@ RIPER-for-All uses a hybrid symbolic notation system:
 - **Memory**: Σ₁-Σ₆ (Greek sigma)
 - **Protection**: Ψ₁-Ψ₆ (Greek psi)
 
-This reduces token usage from ~15,000 to ~1,500 (90% reduction).
+The complete RIPER spec rendered for each tool is **≈1.3k–1.7k tokens**
+(measured across all 10 adapters). The symbolic encoding is what makes that
+fit; an equivalent prose ruleset typically runs an order of magnitude larger.
 
 ## Architecture
 

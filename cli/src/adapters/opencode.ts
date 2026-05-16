@@ -80,7 +80,9 @@ export class OpenCodeAdapter extends BaseAdapter {
       ...result,
       filesCreated: [
         ...(result.filesCreated || []),
-        ...(dryRun ? [] : [this.getRulesFilePath(), path.join(this.getConfigDir(), 'opencode.json')])
+        // super.install already includes the rules file; only add opencode.json
+        // here to avoid the duplicate line in `sync` output (Bug 9).
+        ...(dryRun ? [] : [path.join(this.getConfigDir(), 'opencode.json')])
       ]
     };
   }

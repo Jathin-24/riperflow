@@ -37,12 +37,23 @@ async function readLocalVersion(): Promise<string> {
   return String(pkg.version ?? '0.0.0');
 }
 
-async function fetchLatestVersion(): Promise<string | null> {
+type FetchResult =
+  | { status: 'ok'; latest: string }
+  | { status: 'not-published' }
+  | { status: 'offline' };
+
+async function fetchLatestVersion(): Promise<FetchResult> {
   try {
     const { stdout } = await execAsync(`npm view ${PKG_NAME} version`, { timeout: 8000 });
-    return stdout.trim();
-  } catch {
-    return null;
+    return { status: 'ok', latest: stdout.trim() };
+  } catch (err) {
+    // npm prints `E404` to stderr when the package name is not on the registry.
+    // Anything else (ENOTFOUND, ETIMEDOUT, ECONNRESET, ...) is a network issue.
+    const stderr = String((err as { stderr?: string }).stderr ?? '');
+    if (/\bE404\b/.test(stderr) || /Not found/i.test(stderr)) {
+      return { status: 'not-published' };
+    }
+    return { status: 'offline' };
   }
 }
 
@@ -54,14 +65,21 @@ export async function updateCommand(options: UpdateOptions = {}): Promise<void> 
   }
 
   const current = await readLocalVersion();
-  const latest = await fetchLatestVersion();
+  const result = await fetchLatestVersion();
 
-  if (!latest) {
+  if (result.status === 'offline') {
     console.log(chalk.yellow(`⚠ Could not reach the npm registry (offline or network error).`));
     console.log(chalk.gray(`  Current version: ${current}\n`));
     return;
   }
 
+  if (result.status === 'not-published') {
+    console.log(chalk.yellow(`ℹ ${PKG_NAME} is not published to the npm registry yet — nothing to compare against.`));
+    console.log(chalk.gray(`  Current version: ${current}\n`));
+    return;
+  }
+
+  const latest = result.latest;
   const cmp = compareSemver(latest, current);
 
   if (cmp > 0) {
