@@ -1,215 +1,161 @@
+<!-- TODO: replace <user>/riperflow below with the live GitHub URL after repo create -->
+
 # Riperflow
 
-Universal RIPER framework for AI coding tools - Works across Cursor, Claude Code, OpenCode and more.
+> One workflow methodology across **ten** AI coding tools — Cursor, Claude Code, OpenCode, Aider, and friends — in a single ≈1,350-token spec.
 
-## Overview
+[![npm version](https://img.shields.io/npm/v/riperflow.svg?logo=npm&label=npm)](https://www.npmjs.com/package/riperflow)
+[![npm downloads](https://img.shields.io/npm/dw/riperflow.svg)](https://www.npmjs.com/package/riperflow)
+[![CI](https://img.shields.io/github/actions/workflow/status/nitininfrax/riperflow/ci.yml?branch=main&label=tests)](https://github.com/nitininfrax/riperflow/actions/workflows/ci.yml)
+[![license](https://img.shields.io/npm/l/riperflow.svg)](./LICENSE)
+[![node](https://img.shields.io/node/v/riperflow.svg)](https://www.npmjs.com/package/riperflow)
 
-Riperflow brings the RIPER (Research, Innovate, Plan, Execute, Review) development methodology to every major AI coding tool. It creates a unified system that works across:
+---
 
-- Cursor IDE
-- Claude Code
-- OpenCode
-- KiloCode
-- VS Code
-- Roo Code
-- Aider
-- Windsurf
-- Cline
-- Codex CLI
+## Why this exists
 
-## Features
+If you use more than one AI coding tool — and most people do, mixing Cursor for IDE work, Claude Code for terminal sessions, Aider for refactors — you've probably written four versions of the same project rules. Each tool wants a different file in a different place: `.cursor/rules/`, `CLAUDE.md`, `AGENTS.md`, `CONVENTIONS.md`. They drift.
 
-### Core RIPER Modes
-- 🔍 **Research** (Ω₁) - Gather information and document findings
-- 💡 **Innovate** (Ω₂) - Explore options and suggest ideas
-- 📝 **Plan** (Ω₃) - Create specifications and sequence steps
-- ⚙️ **Execute** (Ω₄) - Implement code according to plan
-- 🔎 **Review** (Ω₅) - Validate output against requirements
+Riperflow keeps **one source of truth** (a small memory bank in your repo) and generates the right rule file for each tool in its native format. Switch tools mid-task and your project context comes with you.
 
-### Memory Bank
-- `projectbrief.md` - Requirements and scope
-- `systemPatterns.md` - Architecture and components
-- `techContext.md` - Tech stack information
-- `activeContext.md` - Current focus and changes
-- `progress.md` - Milestones and tracking
-- `protection.md` - Code protection registry
-
-### BMAD Enterprise Features
-- **Role System** - PO, Architect, Developer, QA, DevOps
-- **Quality Gates** - Design → Development → Testing → Review → Deploy
-- **PRD Management** - Product Requirements Documents
-- **Code Protection** - 6 levels from Open to Frozen
-
-### Dashboard
-- **TUI Dashboard** - Terminal-based stats
-- **Web Dashboard** - Browser interface with real-time updates via WebSocket;
-  bound to `127.0.0.1` only and protected by a per-project bearer token
-  (`.riper/dashboard.token`, mode 0600)
-
-### Advanced Analytics
-- **SQLite Database** - High-performance analytics storage with JSONL fallback
-- **Event Tracking** - Session management, mode history, command tracking
-- **Weekly Reports** - Activity summaries and violation tracking
-
-### Performance Features
-- **File Locking** - Concurrent modification prevention with proper-lockfile across every persistent write path
-- **Memory Truncation** - Bank files auto-archived when they exceed their declared maxSize during sync
-- **Analytics Snapshot Cache** - Single read serves stats / mode history / command usage aggregations
-
-### MCP Integration
-- GitHub
-- Web Search (Brave)
-- Browser (Playwright)
-- Docker
-
-## Installation
+## Quickstart
 
 ```bash
-# Interactive (prompts you to pick tools):
-npx riperflow init
-
-# Non-interactive (CI, Docker, scripted demos):
-npx riperflow init -y
+mkdir my-project && cd my-project
+npx riperflow init           # interactive: pick which tools to scaffold
+npx riperflow setup --tools cursor,claude-code,opencode,aider
 ```
 
-`init` defaults to enabling Cursor, Claude Code, and OpenCode. Add more
-later with `setup --tools cline,codex,...` (full list below).
+That writes:
 
-## Usage
+- `memory-bank/` — six markdown files capturing brief, architecture, tech context, active work, progress, and code-protection registry. **The source of truth.**
+- The right rule file for each tool you picked, in its native location (full list [below](#supported-tools)).
+- `.riper/config.json` + `.riper/state.json` — Riperflow's bookkeeping.
 
-**You can use RIPER in two ways:**
+Now open the project in any of the tools you scaffolded. The AI sees the rules immediately; ask it to switch modes with `/r`, `/p`, `/e`, etc., and it'll read the correct memory file for that mode.
 
-### 1. Inside AI Chat (Recommended)
+> **Non-interactive?** Add `-y` to `init`. The CLI detects piped stdin / CI automatically and falls back to defaults.
 
-When you're inside Claude Code, Cursor, OpenCode, or KiloCode, just use slash commands:
+## The methodology — RIPER in 30 seconds
 
-```
-/r         → Switch to Research mode
-/i         → Switch to Innovate mode  
-/p         → Switch to Plan mode
-/e         → Switch to Execute mode
-/rev       → Switch to Review mode
-```
+Riperflow ships a **methodology**, not a chatbot. Your AI tool runs through five modes:
 
-The AI will automatically:
-- Acknowledge the mode switch
-- Follow mode permissions (read-only in Research, full access in Execute, etc.)
-- Read your current task from `memory-bank/activeContext.md`
-- Check `memory-bank/protection.md` before modifying files
+| Mode | Symbol | What it can do | When to use |
+|---|---|---|---|
+| **Research** | Ω₁ 🔍 | Read-only — explain, analyze, summarize | Understanding new code |
+| **Innovate** | Ω₂ 💡 | Suggest approaches; cannot write | Brainstorming a feature |
+| **Plan** | Ω₃ 📝 | Write docs only, no source code | Speccing the work |
+| **Execute** | Ω₄ ⚙️ | Full write access | Building |
+| **Review** | Ω₅ 🔎 | Read-only validation | Pre-merge sanity check |
 
-### 2. From Terminal
+Mode permissions are enforced by the generated rule files; the AI refuses out-of-mode edits without you doing anything.
+
+## Supported tools
+
+| Tool | Files Riperflow writes | Native discovery? |
+|---|---|---|
+| Cursor | `.cursor/rules/riper.mdc` | ✅ |
+| Claude Code | `CLAUDE.md`, `.claude/rules/riper.md` | ✅ |
+| OpenCode | `.opencode/AGENTS.md`, `.opencode/opencode.json` | ✅ |
+| KiloCode | `.kilocode/rules/riper.md` | ✅ |
+| VS Code | `.vscode/.riper.md` | ✅ |
+| Roo Code | `.roo/rules/riper.md` | ✅ |
+| Aider | `CONVENTIONS.md`, `.aider/riper.md`, `.aider.conf.yml` | ✅ |
+| Windsurf | `.windsurf/rules/riper.md`, `.windsurf/cascade.md` | ✅ |
+| Cline | `.cline/instructions/riper.md` + settings | ✅ |
+| Codex CLI | `AGENT.md`, `.codex/riper.md` | ✅ |
+
+## How small the spec is
+
+The full RIPER spec rendered for each tool — modes, permissions, memory references, BMAD roles, code-protection rules — fits in **~1,350 tokens on average** (measured across all 14 generated rule files; range 518–1,763 depending on the tool's preferred verbosity). The encoding uses symbolic notation:
+
+- **Modes:** Ω₁ … Ω₅ (Greek omega)
+- **Phases:** Π₁ … Π₄ (pi)
+- **Memory slots:** Σ₁ … Σ₆ (sigma)
+- **Protection levels:** Ψ₁ … Ψ₆ (psi)
+
+Same semantics, ~10× smaller than the equivalent prose ruleset. Your model spends its context budget on your code, not on remembering how to behave.
+
+## CLI reference
 
 ```bash
-# CLI commands
-npx riperflow init
-npx riperflow mode research
-npx riperflow sync                  # Regenerate per-tool rule files
-npx riperflow dashboard
-npx riperflow dashboard web --detach  # Background, then 'dashboard stop'
-npx riperflow update                # Check npm registry for newer version
-```
+# Modes (or use the single-letter shortcuts r / i / p / e / rev)
+riperflow mode research
+riperflow mode plan
+riperflow e                          # = mode execute
 
-### Setup AI Tools
-```bash
-npx riperflow setup --tools cursor,claude-code,opencode,kilocode
-```
+# Sync the memory bank into every configured tool's rule file
+riperflow sync
 
-### Tool Rule Directories
+# Status: current mode, phase, configured tools, memory bank state
+riperflow status
 
-| Tool | Rules Directory |
-|------|----------------|
-| Claude Code | (project root) `CLAUDE.md` + `.claude/rules/` |
-| Cursor | `.cursor/rules/` |
-| OpenCode | `.opencode/AGENTS.md` + `.opencode/opencode.json` |
-| KiloCode | `.kilocode/rules/` |
-| VS Code | `.vscode/.riper.md` |
-| Roo Code | `.roo/rules/` |
-| Aider | (project root) `CONVENTIONS.md` + `.aider.conf.yml` + `.aider/` |
-| Windsurf | `.windsurf/` (rules + `cascade.md`) |
-| Cline | `.cline/instructions/` + `global_instructions.json` + `settings.json` |
-| Codex CLI | (project root) `AGENT.md` + `.codex/` |
+# Dashboard (web UI on localhost, token-protected)
+riperflow dashboard                  # TUI
+riperflow dashboard web --detach     # web, backgrounded; `dashboard stop` to kill
 
-### MCP Services
-```bash
-npx riperflow mcp add github
-npx riperflow mcp add websearch
-npx riperflow mcp generate
-```
+# MCP integration (GitHub, web search, browser, Docker)
+riperflow mcp add github
+riperflow mcp add websearch
+riperflow mcp generate               # write mcp.json into each tool
 
-### Dashboard
-```bash
-# TUI Dashboard
-npx riperflow dashboard
-
-# Web Dashboard
-npx riperflow dashboard web --detach
-```
-
-### Analytics
-```bash
-riperflow analytics                 # Summary (default 'stats')
-riperflow analytics stats           # JSONL-backed aggregates
-riperflow analytics weekly          # SQLite-backed weekly summary
+# Analytics
+riperflow analytics stats
+riperflow analytics weekly
 riperflow analytics export --format json --output events.json
-riperflow analytics export --format csv  # CSV to stdout
-riperflow analytics migrate         # Rebuild SQLite index from JSONL
-```
+riperflow analytics migrate          # rebuild SQLite index from JSONL
 
-### BMAD Commands
-```bash
-# Roles
+# BMAD: roles, quality gates, PRDs, code protection
 riperflow role list
 riperflow role set architect
-
-# Quality Gates
 riperflow gate list
 riperflow gate advance
-riperflow gate approve design
-
-# PRD
 riperflow prd create "Feature Name"
-riperflow prd list
-riperflow prd approve <id>
-
-# Code Protection
 riperflow protect set src/auth locked
 riperflow protect check src/auth
+
+# Check for updates
+riperflow update
 ```
 
-## Token Optimization
+Run any command with `--help` for full options.
 
-Riperflow uses a hybrid symbolic notation system:
-- **Modes**: Ω₁-Ω₅ (Greek omega)
-- **Phases**: Π₁-Π₄ (Greek pi)
-- **Memory**: Σ₁-Σ₆ (Greek sigma)
-- **Protection**: Ψ₁-Ψ₆ (Greek psi)
+## Concepts (in one paragraph each)
 
-The complete RIPER spec rendered for each tool is **≈1.3k–1.7k tokens**
-(measured across all 10 adapters). The symbolic encoding is what makes that
-fit; an equivalent prose ruleset typically runs an order of magnitude larger.
+**Memory bank.** Six markdown files in `memory-bank/`: `projectbrief.md` (scope), `systemPatterns.md` (architecture), `techContext.md` (stack), `activeContext.md` (current focus — updated as you work), `progress.md` (milestones), `protection.md` (which files are off-limits). Every tool's generated rule file points back to these.
 
-## Architecture
+**BMAD roles.** Optional structure for teams: Product Owner, Architect, Developer, QA, DevOps. Each role has scoped permissions and a default mode. Switch with `riperflow role set <role>`.
 
-```
-┌─────────────────────────────────────────┐
-│             Riperflow CLI               │
-└──────────────────┬──────────────────────┘
-                   │
-    ┌──────────────┼──────────────┐
-    ▼              ▼              ▼
-┌────────┐   ┌─────────┐   ┌──────────┐
-│ Core   │   │ Adapters│   │ Memory   │
-│ Modes  │   │ Cursor  │   │ Manager  │
-│ BMAD   │   │ Claude  │   │ Sync     │
-│ Protect│   │ OpenCode│   │ Backup   │
-└────────┘   └─────────┘   └──────────┘
-```
+**Quality gates.** Five stages — Design → Development → Testing → Review → Deploy. Advance with `riperflow gate advance`; approve with `gate approve <stage>`. Useful for replicating a lightweight stage-gate process inside AI-driven work.
+
+**Code protection.** Six levels from `open` (anyone, no checks) to `frozen` (no changes ever). Apply per path: `riperflow protect set src/auth locked`. The generated rule files instruct the AI to check `protection.md` before any modification.
+
+**Dashboard.** Live view of mode, phase, memory-bank file sizes, recent commands, violations. Web version uses Express + WebSocket for real-time updates, **bound to `127.0.0.1` only** and protected by a per-project bearer token in `.riper/dashboard.token` (mode 0600). The token is auto-injected into the served HTML so the local browser tab "just works."
+
+**MCP.** Generates Model Context Protocol config files for each tool that supports MCP (Claude Code, Cursor, OpenCode, KiloCode, VS Code). One `mcp add <server>` + `mcp generate` cascades the same servers across every tool.
+
+## Status
+
+- 215/215 unit tests pass · Node 20+ · MIT
+- Tested end-to-end on Linux; macOS and Windows reports welcome
+- Public API stable for v1.x; breaking changes will go in v2
+
+## Contributing
+
+Bug reports, tool integrations, and methodology improvements all welcome.
+
+- **Issues:** https://github.com/nitininfrax/riperflow/issues
+- **Discussions:** https://github.com/nitininfrax/riperflow/discussions
+- Pull requests should include a test (see `cli/test/`)
 
 ## Documentation
 
-- [Architecture](architecture.md)
-- [PRD](PRD.md)
+Deeper dives (rendered on GitHub):
+
+- [Architecture](https://github.com/nitininfrax/riperflow/blob/main/architecture.md)
+- [Product requirements (PRD)](https://github.com/nitininfrax/riperflow/blob/main/PRD.md)
+- [Test report](https://github.com/nitininfrax/riperflow/blob/main/TEST-REPORT.md)
 
 ## License
 
-MIT
+MIT — see [LICENSE](./LICENSE).
