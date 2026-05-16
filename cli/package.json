@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "build": "tsc && node -e \"const fs=require('fs-extra'); fs.copySync('src/dashboard/public','dist/dashboard/public'); fs.chmodSync('dist/index.js', 0o755);\"",
+    "prepublishOnly": "node scripts/prepublish.mjs",
     "start": "node dist/index.js",
     "dev": "tsc && node dist/index.js",
     "test": "vitest",

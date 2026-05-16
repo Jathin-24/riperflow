@@ -6,3 +6,9 @@ test-project/.riper/
 test-project/memory-bank/
 *.log
 .DS_Store
+.gstack/
+
+# Copied into cli/ by scripts/prepublish.mjs at npm publish time.
+# Canonical lives at the repo root; ignoring these prevents drift.
+cli/README.md
+cli/LICENSE
