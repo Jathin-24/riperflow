@@ -1,5 +1,6 @@
 import { BaseAdapter, AdapterConfig, AdapterResult } from './base.js';
 import { generateHybridRules, generateToolConfig } from './rules-generator.js';
+import { safeWrite } from '../utils/safe-write.js';
 import path from 'path';
 import fs from 'fs-extra';
 
@@ -111,8 +112,9 @@ test-cmd: npm test
 
         await fs.writeFile(configPath, config, 'utf8');
 
-        // Create CONVENTIONS.md
-        await fs.writeFile(conventionsPath, this.getRulesContent(), 'utf8');
+        // Create CONVENTIONS.md (safeWrite backs up any user-authored
+        // CONVENTIONS.md first — Bug 19).
+        await safeWrite(conventionsPath, this.getRulesContent());
       } catch (error) {
         return { success: false, message: `Failed to create Aider config: ${error}` };
       }

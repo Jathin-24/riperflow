@@ -1,5 +1,6 @@
 import { BaseAdapter, AdapterConfig, AdapterResult } from './base.js';
 import { generateHybridRules, generateToolConfig } from './rules-generator.js';
+import { safeWrite } from '../utils/safe-write.js';
 import path from 'path';
 import fs from 'fs-extra';
 
@@ -135,10 +136,11 @@ Codex updates (in Execute mode):
 
     if (!dryRun) {
       try {
-        // Create AGENT.md in project root (Codex convention)
+        // Create AGENT.md in project root (Codex convention).
+        // safeWrite backs up any user-authored AGENT.md first (Bug 19).
         const agentContent = this.getAgentContent();
         await fs.ensureDir(path.dirname(agentPath));
-        await fs.writeFile(agentPath, agentContent, 'utf8');
+        await safeWrite(agentPath, agentContent);
 
         // Create .codex/config.json
         const config: CodexConfig = {

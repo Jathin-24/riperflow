@@ -1,5 +1,6 @@
 import { BaseAdapter, AdapterConfig } from './base.js';
 import { generateHybridRules, generateUniversalRules, generateToolConfig } from './rules-generator.js';
+import { safeWrite } from '../utils/safe-write.js';
 import path from 'path';
 import fs from 'fs-extra';
 
@@ -170,8 +171,9 @@ Always log significant actions to memory bank.
 ---
 *Claude Code Adapter | Riperflow v1.0*
 `;
-    await fs.ensureFile(claudeMdPath);
-    await fs.outputFile(claudeMdPath, content, 'utf-8');
+    // safeWrite backs up any pre-existing user-authored CLAUDE.md to
+    // CLAUDE.md.bak-<timestamp> before overwriting (Bug 19).
+    await safeWrite(claudeMdPath, content);
   }
 
   /**

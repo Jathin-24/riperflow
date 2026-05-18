@@ -146,6 +146,51 @@ describe('generated-file portability + brand hygiene', () => {
     expect(offenders, `files still containing "ripper": ${offenders.join(', ')}`).toEqual([]);
   });
 
+  it.each([
+    ['CLAUDE.md', 'claude-code'],
+    ['AGENT.md',  'codex'],
+    ['CONVENTIONS.md', 'aider'],
+  ])('%s is backed up before overwrite when it pre-exists (Bug #19)', (file, tool) => {
+    // Fresh tmp, fresh init (no setup yet)
+    const fresh = fs.mkdtempSync(path.join(os.tmpdir(), 'riper-bug19-'));
+    try {
+      run(fresh, ['init', '--yes']);
+
+      // Seed a user-authored file that has NO Riperflow marker
+      const userContent = `# My ${file}\n\nThis is my personal project memory — do not destroy.\n`;
+      fs.writeFileSync(path.join(fresh, file), userContent);
+
+      // Run setup for the adapter that owns this root-level file
+      const r = run(fresh, ['setup', '--tools', tool]);
+      expect(r.code).toBe(0);
+
+      // The original content should now live at <file>.bak-<timestamp>
+      const backups = fs.readdirSync(fresh).filter(f => f.startsWith(`${file}.bak-`));
+      expect(backups.length, `expected exactly one ${file}.bak-* backup, found ${backups.length}`).toBe(1);
+      const restored = fs.readFileSync(path.join(fresh, backups[0]), 'utf-8');
+      expect(restored).toBe(userContent);
+
+      // And the new file should be Riperflow-generated (contain the marker)
+      const fresh_content = fs.readFileSync(path.join(fresh, file), 'utf-8');
+      expect(fresh_content).toMatch(/Riperflow/);
+    } finally {
+      fs.removeSync(fresh);
+    }
+  });
+
+  it('does NOT create a redundant .bak for a file Riperflow itself wrote (Bug #19 — idempotency)', () => {
+    const fresh = fs.mkdtempSync(path.join(os.tmpdir(), 'riper-bug19-idem-'));
+    try {
+      run(fresh, ['init', '--yes']);
+      run(fresh, ['setup', '--tools', 'claude-code']);     // first install — CLAUDE.md is Riperflow's
+      run(fresh, ['setup', '--tools', 'claude-code']);     // re-install — should NOT make a .bak
+      const backups = fs.readdirSync(fresh).filter(f => f.startsWith('CLAUDE.md.bak-'));
+      expect(backups, 'reinstalling Riperflow over a Riperflow file should not produce a .bak').toEqual([]);
+    } finally {
+      fs.removeSync(fresh);
+    }
+  });
+
   it('CLAUDE.md has exactly one H1 and one Protection Categories table (Bug #18)', () => {
     const md = fs.readFileSync(path.join(tmp, 'CLAUDE.md'), 'utf-8');
     // Strip fenced code blocks so commented `# ...` inside code samples don't count

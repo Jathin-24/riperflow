@@ -121,7 +121,60 @@ Cosmetic; the rendered CLAUDE.md still works perfectly. Worth a 10-minute cleanu
 - ✓ `update` says "not published yet" (Bug 10 stays fixed)
 - ✓ All output now says `Riperflow` / `riperflow`, no stale `RIPER-for-All`
 
+---
+
+## Round 2 — `hr-beaver-agent` (project with existing CLAUDE.md)
+
+**Why this project:** voicebox was a clean greenfield from Riperflow's POV. `hr-beaver-agent` already had a `CLAUDE.md` (660 bytes, real graphify-integration content the user wrote). This tests the **existing-rules-file path** — and uncovered a P1 bug.
+
+### Findings
+
+✅ `riperflow init -y` correctly does **not** touch existing CLAUDE.md (only creates `.riper/` + `memory-bank/`).
+✅ Pre-existing `.claude/settings.json` and `.claude/settings.local.json` were not modified — riperflow only added new files in that directory.
+✅ All other generated files (22 across 10 tools) parse cleanly and pass the same checks as the voicebox run.
+
+~~❌ **Bug 19 (P1) — `setup --tools claude-code,...` silently clobbers existing `CLAUDE.md` with no prompt, no warning, no backup.** Same risk for `AGENT.md` (Codex) and `CONVENTIONS.md` (Aider).~~ **FIXED in commit `<this commit>`.** New `safeWrite` helper at `cli/src/utils/safe-write.ts` moves any pre-existing user-authored file (no `Riperflow` marker) to `<file>.bak-<ISO-timestamp>` before overwriting. Verified live: re-running setup against hr-beaver-agent produced `CLAUDE.md.bak-2026-05-18T10-16-59-267Z` with md5 identical to the user's original. 4 new regression tests in `dist-smoke.test.ts`.
+
+Original bug evidence (before the fix):
+
+```
+md5 before setup: 8ee39dcfe68a23b3797b02648930d699  (660 B  — user's graphify content)
+md5 after setup:  271de6957b61287aa55adef2ac461e32  (5 KB   — Riperflow universal rules)
+output during setup: ✓ Successful: 10
+```
+
+The user's project documentation was destroyed and `setup` cheerfully reported success. A Claude Code user who already has a `CLAUDE.md` (which is most of them — it's the canonical memory file) tries Riperflow once, loses their context file, and never tries it again.
+
+**Fix scope:**
+- `cli/src/adapters/claude-code.ts` `createClaudeMdFile()` — line 173: `fs.outputFile()` overwrites unconditionally.
+- `cli/src/adapters/codex.ts` for `AGENT.md` (project-root write).
+- `cli/src/adapters/aider.ts` line 115 for `CONVENTIONS.md` (project-root write).
+
+**Recommended behavior:**
+- If the file exists and doesn't contain a `Riperflow` marker (i.e. it wasn't us last time), move it to `<file>.bak-<ISO-timestamp>` with a clear log line: `📦 Saved existing CLAUDE.md → CLAUDE.md.bak-2026-05-18T15-16-04`, then write fresh.
+- Add `--force` flag to skip the backup (for users who do want a clobber).
+- Add a regression test in `dist-smoke.test.ts`: seed a `CLAUDE.md` with arbitrary content, run setup, assert the original content lands in `CLAUDE.md.bak-*` and the original isn't lost.
+
+Restored: hr-beaver-agent's `CLAUDE.md` was reverted from a backup at `/tmp/CLAUDE.md.original-hr-beaver` before any further work. Branch `riperflow-test` is on hr-beaver-agent for inspection.
+
+---
+
 ## Cleanup
+
+Two throwaway branches exist:
+
+```bash
+# voicebox
+cd ~/voicebox && git checkout main && git branch -D riperflow-test
+rm -rf .riper memory-bank .cursor .claude .opencode .kilocode .vscode .roo \
+       .aider .aider.conf.yml CONVENTIONS.md .windsurf .cline .codex AGENT.md CLAUDE.md
+
+# hr-beaver-agent (CLAUDE.md is the user's original; only the new dirs are riperflow)
+cd ~/hr-beaver-agent && git checkout main && git branch -D riperflow-test
+rm -rf .riper memory-bank .cursor .opencode .kilocode .vscode .roo \
+       .aider .aider.conf.yml CONVENTIONS.md .windsurf .cline .codex AGENT.md
+# DO NOT remove .claude/rules/ or CLAUDE.md here — original CLAUDE.md was restored.
+```
 
 Voicebox is on branch `riperflow-test`. To revert any time:
 
