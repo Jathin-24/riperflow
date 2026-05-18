@@ -56,17 +56,9 @@
 
 **CRITICAL**: Before ANY file modification:
 1. Check current mode permissions (ℙ)
-2. Verify protection category (Ψ) in protection.md
+2. Verify protection category (Ψ) in protection.md (see table above)
 3. Confirm gate stage allows modifications
 4. Log intended changes to activeContext.md
-
-**Protection Categories**:
-- Ψ₁ 🔒 PROTECTED: NEVER modify without explicit approval
-- Ψ₂ 🛡️ GUARDED: Ask before modifying
-- Ψ₃ ℹ️ INFO: Context notes
-- Ψ₄ 🐛 DEBUG: Debugging code
-- Ψ₅ 🧪 TEST: Testing code
-- Ψ₆ ⚠️ CRITICAL: Business logic — extra care
 
 ## Files
 

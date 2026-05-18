@@ -73,10 +73,10 @@ export class ClaudeCodeAdapter extends BaseAdapter {
       currentGate: this.currentGate
     });
     
-    const content = `# Riperflow - Claude Code Configuration
-*Generated: ${new Date().toISOString().split('T')[0]}*
-
-${universalRules}
+    // universalRules already starts with `# Riperflow - Universal Rules` (H1) —
+    // don't add a second H1 preamble. Claude Code-specific guidance is appended
+    // below as H2.
+    const content = `${universalRules}
 
 ## Claude Code Tool Use Instructions
 

@@ -93,9 +93,9 @@ Then follow normal Roo Code instructions.
         // Create Roo-specific settings
         const settings = {
           customInstructions: this.getSystemPromptAdditions(),
-          ripperMode: this.currentMode || 'research',
-          ripperRole: this.currentRole || 'developer',
-          ripperGate: this.currentGate || 'design'
+          riperMode: this.currentMode || 'research',
+          riperRole: this.currentRole || 'developer',
+          riperGate: this.currentGate || 'design'
         };
 
         await fs.ensureDir(path.dirname(settingsPath));
@@ -134,9 +134,9 @@ Then follow normal Roo Code instructions.
         settings = await fs.readJson(settingsPath);
       }
 
-      if (mode) settings.ripperMode = mode;
-      if (role) settings.ripperRole = role;
-      if (gate) settings.ripperGate = gate;
+      if (mode) settings.riperMode = mode;
+      if (role) settings.riperRole = role;
+      if (gate) settings.riperGate = gate;
 
       await fs.writeJson(settingsPath, settings, { spaces: 2 });
     } catch {

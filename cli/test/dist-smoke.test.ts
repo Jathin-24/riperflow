@@ -89,3 +89,74 @@ describe('init UX', () => {
     expect(combined).not.toMatch(/Error loading config/);
   });
 });
+
+// Bugs surfaced only by testing against a real project at a non-tmpdir path
+// that's intended for git commit (see REAL-WORLD-TEST.md).
+describe('generated-file portability + brand hygiene', () => {
+  let tmp: string;
+
+  beforeAll(() => {
+    if (!fs.existsSync(CLI)) {
+      throw new Error(`dist build missing at ${CLI} — run \`npm run build\` first`);
+    }
+  });
+
+  beforeEach(() => {
+    tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'riper-portability-'));
+    run(tmp, ['init', '--yes']);
+    run(tmp, ['setup', '--tools', 'cursor,claude-code,opencode,kilocode,vscode,roo,aider,windsurf,cline,codex']);
+  });
+
+  afterEach(() => {
+    fs.removeSync(tmp);
+  });
+
+  const ALL_FILES = [
+    '.cursor/rules/riper.mdc', 'CLAUDE.md', '.claude/rules/riper.md',
+    '.opencode/AGENTS.md', '.opencode/opencode.json', '.kilocode/rules/riper.md',
+    '.vscode/.riper.md', '.roo/rules/riper.md', '.roo/settings.json',
+    'CONVENTIONS.md', '.aider/riper.md', '.aider.conf.yml',
+    '.windsurf/rules/riper.md', '.windsurf/cascade.md', '.windsurf/config.json',
+    '.cline/instructions/riper.md', '.cline/global_instructions.json', '.cline/settings.json',
+    'AGENT.md', '.codex/riper.md', '.codex/config.json', '.codex/instructions.md',
+  ];
+
+  it('no generated file leaks an absolute project path (Bug #16)', () => {
+    const leaks: string[] = [];
+    // Match the tmpdir prefix (e.g. /tmp/riper-portability-XXXXXX) anywhere in any file
+    const tmpRe = new RegExp(tmp.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    for (const rel of ALL_FILES) {
+      const p = path.join(tmp, rel);
+      if (!fs.existsSync(p)) continue;
+      const body = fs.readFileSync(p, 'utf-8');
+      if (tmpRe.test(body)) leaks.push(rel);
+    }
+    expect(leaks, `files leaking the project's absolute path: ${leaks.join(', ')}`).toEqual([]);
+  });
+
+  it('no generated file contains the legacy "ripper" typo (Bug #17)', () => {
+    const offenders: string[] = [];
+    for (const rel of ALL_FILES) {
+      const p = path.join(tmp, rel);
+      if (!fs.existsSync(p)) continue;
+      const body = fs.readFileSync(p, 'utf-8');
+      // "ripper" as a word (typo of "riper") — but NOT inside ".riper" paths
+      if (/\bripper\b/.test(body)) offenders.push(rel);
+    }
+    expect(offenders, `files still containing "ripper": ${offenders.join(', ')}`).toEqual([]);
+  });
+
+  it('CLAUDE.md has exactly one H1 and one Protection Categories table (Bug #18)', () => {
+    const md = fs.readFileSync(path.join(tmp, 'CLAUDE.md'), 'utf-8');
+    // Strip fenced code blocks so commented `# ...` inside code samples don't count
+    const stripped = md.replace(/```[\s\S]*?```/g, '');
+    const h1s = stripped.match(/^# [^#]/gm) || [];
+    expect(h1s.length, `CLAUDE.md should have exactly one H1, got ${h1s.length}: ${h1s.join(' | ')}`).toBe(1);
+
+    const protTables = (md.match(/^\| Category \| Symbol \| Description \|/gm) || []).length;
+    expect(protTables, 'Protection Categories table should appear exactly once').toBe(1);
+
+    const protBulleted = (md.match(/^\*\*Protection Categories\*\*:/gm) || []).length;
+    expect(protBulleted, 'redundant **Protection Categories**: bulleted list should not appear').toBe(0);
+  });
+});

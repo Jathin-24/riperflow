@@ -6,7 +6,7 @@ import fs from 'fs-extra';
 export interface ClineGlobalInstructions {
   version: string;
   instructions: string[];
-  ripper: {
+  riper: {
     enabled: boolean;
     currentMode: string;
     currentRole: string;
@@ -60,7 +60,7 @@ export class ClineAdapter extends BaseAdapter {
         'Use role-appropriate permissions',
         'Update memory bank after significant changes'
       ],
-      ripper: {
+      riper: {
         enabled: true,
         currentMode: this.currentMode || 'research',
         currentRole: this.currentRole || 'developer',
@@ -100,7 +100,7 @@ export class ClineAdapter extends BaseAdapter {
             writeFiles: false, // RIPER enforces protection
             executeCommands: false
           },
-          ripper: {
+          riper: {
             enforceModePermissions: true,
             checkProtectionBeforeWrite: true,
             autoUpdateContext: true,
@@ -138,8 +138,8 @@ export class ClineAdapter extends BaseAdapter {
       // Update global_instructions.json
       if (await fs.pathExists(instructionsPath)) {
         const instructions = await fs.readJson(instructionsPath);
-        instructions.ripper = {
-          ...instructions.ripper,
+        instructions.riper = {
+          ...instructions.riper,
           currentMode: this.currentMode,
           currentRole: this.currentRole,
           currentGate: this.currentGate,
@@ -151,8 +151,8 @@ export class ClineAdapter extends BaseAdapter {
       // Update settings.json
       if (await fs.pathExists(settingsPath)) {
         const settings = await fs.readJson(settingsPath);
-        settings.ripper = {
-          ...settings.ripper,
+        settings.riper = {
+          ...settings.riper,
           mode: this.currentMode,
           role: this.currentRole,
           gate: this.currentGate

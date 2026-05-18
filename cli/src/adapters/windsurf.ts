@@ -109,7 +109,7 @@ Cascade generates commits with RIPER prefixes:
 
         // Create .windsurf/config.json for RIPER settings
         const config = {
-          ripper: {
+          riper: {
             enabled: true,
             mode: this.currentMode || 'research',
             role: this.currentRole || 'developer',
@@ -153,8 +153,8 @@ Cascade generates commits with RIPER prefixes:
         config = await fs.readJson(configPath);
       }
       
-      config.ripper = {
-        ...(config.ripper as Record<string, unknown> || {}),
+      config.riper = {
+        ...(config.riper as Record<string, unknown> || {}),
         ...(mode && { mode }),
         ...(role && { role }),
         ...(gate && { gate }),

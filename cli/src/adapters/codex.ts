@@ -8,7 +8,7 @@ export interface CodexConfig {
   mode: string;
   role: string;
   gate: string;
-  ripper: {
+  riper: {
     enabled: boolean;
     enforcePermissions: boolean;
     checkProtection: boolean;
@@ -146,7 +146,7 @@ Codex updates (in Execute mode):
           mode: this.currentMode || 'research',
           role: this.currentRole || 'developer',
           gate: this.currentGate || 'design',
-          ripper: {
+          riper: {
             enabled: true,
             enforcePermissions: true,
             checkProtection: true
