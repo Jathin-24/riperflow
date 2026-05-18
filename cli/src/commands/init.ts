@@ -76,8 +76,9 @@ export async function initCommand(options: InitOptions): Promise<void> {
     selectedTools = tools;
   }
 
-  // Get project name
-  const projectName = options.yes ? 'my-project' : await getProjectName();
+  // Get project name. In --yes mode we still try package.json, then fall back
+  // to the cwd basename — never the literal "my-project" (Bug 21).
+  const projectName = options.yes ? await getProjectNameNonInteractive() : await getProjectName();
 
   // Create config
   const config = getDefaultConfig();
@@ -130,19 +131,22 @@ export async function initCommand(options: InitOptions): Promise<void> {
   console.log(chalk.gray('     riperflow status\n'));
 }
 
-async function getProjectName(): Promise<string> {
-  const packageJsonPath = process.cwd() + '/package.json';
-  
+async function readPkgName(): Promise<string | null> {
+  const packageJsonPath = path.join(process.cwd(), 'package.json');
   if (await fs.pathExists(packageJsonPath)) {
     try {
       const pkg = await fs.readJson(packageJsonPath);
-      if (pkg.name) {
-        return pkg.name;
-      }
+      if (pkg.name) return String(pkg.name);
     } catch {
-      // Ignore
+      // ignore — malformed package.json shouldn't block init
     }
   }
+  return null;
+}
+
+async function getProjectName(): Promise<string> {
+  const fromPkg = await readPkgName();
+  if (fromPkg) return fromPkg;
 
   const { name } = await inquirer.prompt([
     {
@@ -153,6 +157,14 @@ async function getProjectName(): Promise<string> {
       validate: (input: string) => input.length > 0 || 'Name is required'
     }
   ]);
-  
+
   return name;
+}
+
+// Used by --yes / non-TTY init. Mirrors getProjectName's lookup order but
+// substitutes the cwd basename for the inquirer prompt (Bug 21).
+async function getProjectNameNonInteractive(): Promise<string> {
+  const fromPkg = await readPkgName();
+  if (fromPkg) return fromPkg;
+  return path.basename(process.cwd()) || 'my-project';
 }

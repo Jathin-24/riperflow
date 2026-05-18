@@ -178,6 +178,40 @@ describe('generated-file portability + brand hygiene', () => {
     }
   });
 
+  it('init --yes uses cwd basename as projectName, not literal "my-project" (Bug #21)', () => {
+    // mkdtemp returns a path whose basename is deterministic-ish; use the actual one
+    const r = run(tmp, ['init', '--yes']);
+    expect(r.code).toBe(0);
+    const cfg = JSON.parse(fs.readFileSync(path.join(tmp, '.riper', 'config.json'), 'utf-8'));
+    expect(cfg.projectName).toBe(path.basename(tmp));
+    expect(cfg.projectName).not.toBe('my-project');
+  });
+
+  it('init --yes prefers package.json name over cwd basename when both exist (Bug #21)', () => {
+    const fresh = fs.mkdtempSync(path.join(os.tmpdir(), 'riper-bug21-pkg-'));
+    try {
+      fs.writeFileSync(path.join(fresh, 'package.json'), JSON.stringify({ name: 'my-cool-app', version: '0.0.1' }));
+      const r = run(fresh, ['init', '--yes']);
+      expect(r.code).toBe(0);
+      const cfg = JSON.parse(fs.readFileSync(path.join(fresh, '.riper', 'config.json'), 'utf-8'));
+      expect(cfg.projectName).toBe('my-cool-app');
+    } finally {
+      fs.removeSync(fresh);
+    }
+  });
+
+  it('mode-blocked write errors include a friendly switch hint (Bug #20)', () => {
+    // init -y leaves the project in research (read-only). Attempting prd create
+    // should fail with both the strict reason AND the hint.
+    run(tmp, ['init', '--yes']);
+    const r = run(tmp, ['prd', 'create', 'Test Feature']);
+    const combined = r.stdout + r.stderr;
+    expect(combined).toMatch(/does not allow WRITE/);
+    // Bug 20: hint must point the user at the fix
+    expect(combined).toMatch(/riperflow p.*Plan/);
+    expect(combined).toMatch(/riperflow e.*Execute/);
+  });
+
   it('does NOT create a redundant .bak for a file Riperflow itself wrote (Bug #19 — idempotency)', () => {
     const fresh = fs.mkdtempSync(path.join(os.tmpdir(), 'riper-bug19-idem-'));
     try {
