@@ -214,6 +214,56 @@ Cleanup performed: `riperflow-test` branch deleted, all generated artifacts remo
 
 ---
 
+## Round 4 — four-project parallel sweep (after all 21 bugs fixed)
+
+Final confidence check before tag. Same battery run against four real projects simultaneously, each on a throwaway `riperflow-test` branch:
+
+| Project | Type | Bug-19 trigger? |
+|---|---|---|
+| `ai-team` | greenfield (master, package.json only) | no |
+| `hr-beaver-agent` | Python project, user-authored 660-B CLAUDE.md | **yes** |
+| `voicebox` | Bun + Rust + Tauri, no rules files | no |
+| `riper-for-everyone` | the riperflow repo itself | no |
+
+### Result matrix — every box green
+
+| Project | files | tok-avg | Bug 16 (abs leak) | Bug 17 (ripper) | Bug 18 (H1/tbl) | Bug 19 (.bak) | Idempotency | Bug 21 (name) |
+|---|---:|---:|---|---|---|---|---|---|
+| ai-team | 22/22 | 989 | 0 | 0 | 1/1 | 0 | byte-stable | ✓ |
+| hr-beaver-agent | 22/22 | 989 | 0 | 0 | 1/1 | **1 (correctly)** | byte-stable | ✓ |
+| voicebox | 22/22 | 989 | 0 | 0 | 1/1 | 0 | byte-stable | ✓ |
+| riper-for-everyone | 22/22 | 989 | 0 | 0 | 1/1 | 0 | byte-stable | ✓ |
+
+### Bug 19 spot-verification (hr-beaver-agent)
+
+```
+backup file:  CLAUDE.md.bak-2026-05-18T10-38-06-001Z
+backup md5 matches user original: ✓ YES (zero data loss)
+```
+
+### Bug 20 spot-verification (all 4 projects)
+
+`prd create` in default Research mode produces the friendly hint in all four:
+
+```
+ai-team               ✓ hint shown
+hr-beaver-agent       ✓ hint shown
+voicebox              ✓ hint shown
+riper-for-everyone    ✓ hint shown
+```
+
+### Token-size determinism
+
+CLAUDE.md compiles to **exactly 1,275 tokens (5,098 bytes)** in all four projects — confirms the spec is deterministic and project-content-independent.
+
+### Verdict
+
+**21/21 known bugs fixed. Zero new bugs found.** Cleared for `git tag v1.0.0`.
+
+Cleanup: all four `riperflow-test` branches deleted, generated artifacts removed, hr-beaver-agent's user CLAUDE.md restored from `/tmp/CLAUDE.md.original-hr-beaver`.
+
+---
+
 ## Cleanup
 
 Two throwaway branches exist:
