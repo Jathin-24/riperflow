@@ -159,6 +159,61 @@ Restored: hr-beaver-agent's `CLAUDE.md` was reverted from a backup at `/tmp/CLAU
 
 ---
 
+---
+
+## Round 3 — Riperflow eating its own dogfood
+
+**Why this project:** the ultimate self-test. If Riperflow can't run cleanly inside the repo that built it, the product story doesn't survive contact with the launch demo.
+
+### Findings
+
+✅ **22/22 generated files pass** (every parse + symbol check, same battery as voicebox).
+✅ **Bug 16 fix holds** — zero absolute-path leaks across all 22 files when generated into a deep nested path (`/home/nitin/riper-for-everyone`).
+✅ **Bug 17 fix holds** — zero `ripper` typos in any config.
+✅ **Bug 18 fix holds** — CLAUDE.md has exactly one H1 and one Protection Categories table.
+✅ **Bug 19 fix holds** — no spurious `.bak-*` files (correct: nothing pre-existed at the root, so no backup was needed).
+✅ **Idempotency** — running `sync` twice produces byte-identical output for all 22 files.
+✅ **Dashboard end-to-end live** — token meta tag injected, every `/api/*` endpoint returns 401 without token and 200 with token, `/api/memory` correctly reports all 6 memory-bank files with real byte counts, `/api/watcher` is actively watching the project.
+✅ **BMAD primitives** (`gate list`, `role list`) work and render cleanly.
+
+### Two minor UX paper cuts (P3 — not launch blockers)
+
+#### Bug 20 (P3 UX) — write commands in default Research mode print math-notation errors
+
+Out of the box, `init -y` leaves the project in **Research** mode (read-only). Running BMAD writes like `prd create` or `protect set` immediately after init dumps:
+
+```
+❌ Mode research (Ω₁ 🔍) does not allow WRITE operations.
+   ℙ(Ω₁)={"read":true,"create":false,"update":false,"delete":false}
+   (mode: research, action: create, path: /home/nitin/.../prds/promotion-launch-v10.json)
+```
+
+The enforcement is correct — that's the whole point of modes. But the error reads like math homework, and a first-time user has to know to switch with `riperflow p` or `riperflow e`. A friendlier nudge would help:
+
+> ❌ This action requires write permission. You're in 🔍 Research mode (read-only).
+> 👉 Switch with `riperflow p` (Plan) or `riperflow e` (Execute), then retry.
+
+Fix scope: thread a one-line "how to fix" hint into the `EnforcementError` message in `cli/src/core/enforce.ts`. ~5 lines.
+
+#### Bug 21 (P3 UX) — `init -y` defaults projectName to literal `"my-project"` even when cwd has a meaningful name
+
+```ts
+// cli/src/commands/init.ts:80
+const projectName = options.yes ? 'my-project' : await getProjectName();
+```
+
+When `--yes` is set and no `package.json` exists, the project gets named `"my-project"` instead of `path.basename(process.cwd())`. In this dogfood run, `/home/nitin/riper-for-everyone` ended up as `projectName: "my-project"`. Cosmetic — the path is correct, the name is just bland — but visible in `riperflow status` output and in the dashboard.
+
+Fix: in the `--yes` branch, fall back to `path.basename(process.cwd())` (the same default `getProjectName` already uses in interactive mode). 1-line change.
+
+### Verdict
+
+**No new bugs of substance.** The two paper cuts above are 6 lines of total work; ship-or-defer is your call. Riperflow successfully ate its own dogfood — every previously-fixed bug stays fixed against the largest, most varied test target tried so far.
+
+Cleanup performed: `riperflow-test` branch deleted, all generated artifacts removed via `rm -rf`, repo back to `fix-plan` HEAD with only `.agents/` + `skills-lock.json` untracked (those were not from this test — left in place).
+
+---
+
 ## Cleanup
 
 Two throwaway branches exist:
