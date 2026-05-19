@@ -1,6 +1,6 @@
 {
   "name": "riperflow",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Universal RIPER framework for AI coding tools - Works across Cursor, Claude Code, OpenCode and more",
   "main": "dist/index.js",
   "type": "module",
@@ -30,7 +30,7 @@
     "workflow",
     "development-framework"
   ],
-  "author": "",
+  "author": "Nitin Gupta <nitingupta220@gmail.com> (https://github.com/nitingupta220)",
   "license": "MIT",
   "repository": {
     "type": "git",
