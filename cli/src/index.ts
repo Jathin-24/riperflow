@@ -2,6 +2,9 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 import { initCommand } from './commands/init.js';
 import { setupCommand } from './commands/setup.js';
 import { modeCommand } from './commands/mode.js';
@@ -22,12 +25,15 @@ import { detectTools } from './utils/detection.js';
 import { loadConfig } from './config/loader.js';
 import { trackCommand } from './analytics/events.js';
 
+const pkgPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'package.json');
+const { version: pkgVersion } = JSON.parse(readFileSync(pkgPath, 'utf8')) as { version: string };
+
 const program = new Command();
 
 program
   .name('riperflow')
   .description('Universal RIPER framework for AI coding tools')
-  .version('1.0.0');
+  .version(pkgVersion);
 
 program
   .hook('preAction', async (_thisCommand, actionCommand) => {
