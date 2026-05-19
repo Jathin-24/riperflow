@@ -1,6 +1,6 @@
 {
   "name": "riperflow",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Universal RIPER framework for AI coding tools - Works across Cursor, Claude Code, OpenCode and more",
   "main": "dist/index.js",
   "type": "module",
