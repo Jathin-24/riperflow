@@ -30,12 +30,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # NOTE: do NOT set `registry-url` here — it writes a project .npmrc with
+      # `_authToken=${NODE_AUTH_TOKEN}` plus `always-auth=true`. When the secret
+      # is absent the token expands to empty, npm treats that as "auth supplied"
+      # and never attempts OIDC, producing ENEEDAUTH. With no `registry-url`,
+      # npm hits its default https://registry.npmjs.org/ and trusted-publisher
+      # OIDC kicks in (requires npm >= 11.5, installed below).
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: cli/package-lock.json
-          registry-url: https://registry.npmjs.org
 
       - name: Upgrade npm for trusted publishing (requires npm >= 11.5)
         run: npm install -g npm@latest
@@ -61,7 +66,5 @@ jobs:
           fi
           echo "Tag and package.json agree: $PKG"
 
-      - name: Publish (OIDC via trusted publisher; NPM_TOKEN fallback if set)
+      - name: Publish via OIDC trusted publisher
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
