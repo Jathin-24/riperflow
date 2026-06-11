@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { loadConfig, saveConfig } from '../config/loader.js';
 import { createAdapter } from '../adapters/index.js';
+import { detectToolByName } from '../utils/detection.js';
 import { trackAdapterInstall } from '../analytics/index.js';
 
 interface SetupOptions {
@@ -42,6 +43,13 @@ export async function setupCommand(options: SetupOptions): Promise<void> {
     if (!adapter) {
       console.log(chalk.yellow(`  ⚠ ${toolName}: Adapter not available yet`));
       results.push({ tool: toolName, success: false, message: 'Adapter not available' });
+      continue;
+    }
+
+    const detectedTool = await detectToolByName(toolName);
+    if (!detectedTool || !detectedTool.available) {
+      console.log(chalk.yellow(`  ⚠ ${toolName}: external tool not detected or installed`));
+      results.push({ tool: toolName, success: false, message: 'External tool not installed' });
       continue;
     }
 

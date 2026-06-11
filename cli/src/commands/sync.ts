@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { loadConfig } from '../config/loader.js';
 import { createAdapter } from '../adapters/base.js';
+import { detectToolByName } from '../utils/detection.js';
 import { getAnalyticsStorage } from '../analytics/storage.js';
 import { truncateMemoryBank } from '../memory/manager.js';
 
@@ -29,6 +30,13 @@ export async function sync(options: SyncOptions = {}): Promise<SyncResult> {
       skipped.push(toolId);
       continue;
     }
+
+    const detectedTool = await detectToolByName(toolId);
+    if (!detectedTool || !detectedTool.available) {
+      skipped.push(toolId);
+      continue;
+    }
+
     const result = await adapter.install(dryRun);
     if (result.success && result.filesCreated) {
       updated.push(...result.filesCreated);

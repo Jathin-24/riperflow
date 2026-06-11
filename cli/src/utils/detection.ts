@@ -166,8 +166,18 @@ export async function detectAndPrintTools(): Promise<void> {
   }
 }
 
+function normalizeToolName(name: string): string {
+  return name.replace(/[-_]/g, '').toLowerCase();
+}
+
 export function getToolConfig(name: string): typeof TOOL_CONFIGS[0] | undefined {
-  return TOOL_CONFIGS.find(t => t.name === name);
+  const normalizedName = normalizeToolName(name);
+  return TOOL_CONFIGS.find(t => normalizeToolName(t.name) === normalizedName);
+}
+
+export async function detectToolByName(toolName: string): Promise<DetectedTool | null> {
+  const config = getToolConfig(toolName);
+  return config ? await detectTool(config) : null;
 }
 
 export function getAllToolConfigs(): typeof TOOL_CONFIGS {
